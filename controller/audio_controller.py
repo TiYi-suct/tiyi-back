@@ -36,6 +36,13 @@ class AudioQuery(Resource):
         return AudioService.query_audios(g.username, name, tags)
 
 
+'''
+此接口上传的是需要分析的音频文件，业务相关，需要在数据库保存记录，所以单独提供接口
+也就是说，调用此接口上传文件，就相当于新增一条音频记录
+此接口会对文件格式进行检查
+'''
+
+
 class AudioUpload(Resource):
     @login_required
     def post(self):
@@ -43,12 +50,6 @@ class AudioUpload(Resource):
         if 'file' not in request.files:
             return Response.error('请上传音频文件')
         return AudioService.upload(request.files['file'])
-
-
-class AudioDownload(Resource):
-    @staticmethod
-    def get(filename):
-        return send_from_directory(Config.AUDIO_UPLOAD_FOLDER, filename)
 
 
 class AudioLabeling(Resource):
