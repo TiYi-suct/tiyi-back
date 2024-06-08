@@ -5,6 +5,7 @@ import logging
 import uuid
 
 from model.models import User, db
+from utils.jwt_util import get_jwt_token
 from utils.response import Response
 from flask_bcrypt import Bcrypt
 
@@ -49,6 +50,6 @@ class UserService:
             return Response.error_default('用户不存在')
         if not bcrypt.check_password_hash(user.password, password):
             return Response.error_default('密码错误')
-        # todo 保存登录凭证
-        token = uuid.uuid4().hex
+        # 生成jwt返回给用户
+        token = get_jwt_token(username)
         return Response.success(token)
