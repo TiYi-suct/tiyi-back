@@ -6,6 +6,9 @@ from controller.user_controller import UserRegister, UserLogin
 def config_routes(app):
     api = Api(app)
 
+    # hello
+    # api.add_resource(HelloController, '/hello')
+
     # 用户相关资源
     api.add_resource(UserRegister, '/user/register')
     api.add_resource(UserLogin, '/user/login')
