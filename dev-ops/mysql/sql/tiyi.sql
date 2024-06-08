@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 08/06/2024 12:48:40
+ Date: 08/06/2024 18:31:18
 */
 
 SET NAMES utf8mb4;
@@ -38,6 +38,9 @@ CREATE TABLE `analysis_item`  (
 -- ----------------------------
 -- Records of analysis_item
 -- ----------------------------
+INSERT INTO `analysis_item` VALUES (1, 'BPM', 0, '2024-06-08 14:43:56', '2024-06-08 14:43:56');
+INSERT INTO `analysis_item` VALUES (2, '频谱', 2, '2024-06-08 14:44:11', '2024-06-08 14:44:11');
+INSERT INTO `analysis_item` VALUES (3, '移调', 5, '2024-06-08 14:44:22', '2024-06-08 14:44:22');
 
 -- ----------------------------
 -- Table structure for audio
@@ -56,14 +59,13 @@ CREATE TABLE `audio`  (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_username`(`username` ASC) USING BTREE,
-  UNIQUE INDEX `audio_pk`(`audio_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '音频表，保存用户上传的音频信息' ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `audio_pk`(`audio_id` ASC) USING BTREE,
+  INDEX `idx_username`(`username` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '音频表，保存用户上传的音频信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of audio
 -- ----------------------------
-INSERT INTO `audio` VALUES (1, '6608d3dab7714aea92fafe668e0b2ff4', 'Cheng Peng - 卡农 (铃声) - 副本', 'flac', 'D:\\Projects\\PyProjects\\tiyi-back\\files\\audios\\6608d3dab7714aea92fafe668e0b2ff4.flac', '\'\'', '流行,轻松,治愈', NULL, 'maskira', '2024-06-08 11:28:26', '2024-06-08 11:30:13');
 
 -- ----------------------------
 -- Table structure for audio_tags
@@ -103,6 +105,10 @@ CREATE TABLE `order`  (
 -- ----------------------------
 -- Records of order
 -- ----------------------------
+INSERT INTO `order` VALUES (7, 'maskira', 'ORDER_20240608181722_7476135a58a', '5元1000个音乐币', 1000, 5, '2024-06-08 18:17:22', '2024-06-08 18:17:22');
+INSERT INTO `order` VALUES (8, 'maskira', 'ORDER_20240608181755_878d4de70fc', '5元1000个音乐币', 1000, 5, '2024-06-08 18:17:55', '2024-06-08 18:17:55');
+INSERT INTO `order` VALUES (9, 'maskira', 'ORDER_20240608181824_028eb05bc1e', '5元1000个音乐币', 1000, 5, '2024-06-08 18:18:24', '2024-06-08 18:18:24');
+INSERT INTO `order` VALUES (10, 'mask', 'ORDER_20240608181947_3c1404256bb', '5元1000个音乐币', 1000, 5, '2024-06-08 18:19:48', '2024-06-08 18:19:48');
 
 -- ----------------------------
 -- Table structure for pay_flow
@@ -126,6 +132,10 @@ CREATE TABLE `pay_flow`  (
 -- ----------------------------
 -- Records of pay_flow
 -- ----------------------------
+INSERT INTO `pay_flow` VALUES (2, '2024060822001415260503344436', '5元1000个音乐币', 'TRADE_SUCCESS', 'ORDER_20240608181722_7476135a58a', 5, '2088722037015261', '2024-06-08 18:17:30', 5, '2024-06-08 18:15:16', '2024-06-08 18:15:16');
+INSERT INTO `pay_flow` VALUES (3, '2024060822001415260503340517', '5元1000个音乐币', 'TRADE_SUCCESS', 'ORDER_20240608181755_878d4de70fc', 5, '2088722037015261', '2024-06-08 18:18:03', 5, '2024-06-08 18:15:16', '2024-06-08 18:15:16');
+INSERT INTO `pay_flow` VALUES (4, '2024060822001415260503336313', '5元1000个音乐币', 'TRADE_SUCCESS', 'ORDER_20240608181824_028eb05bc1e', 5, '2088722037015261', '2024-06-08 18:18:32', 5, '2024-06-08 18:15:16', '2024-06-08 18:15:16');
+INSERT INTO `pay_flow` VALUES (5, '2024060822001415260503343243', '5元1000个音乐币', 'TRADE_SUCCESS', 'ORDER_20240608181947_3c1404256bb', 5, '2088722037015261', '2024-06-08 18:20:01', 5, '2024-06-08 18:15:16', '2024-06-08 18:15:16');
 
 -- ----------------------------
 -- Table structure for recharge_item
@@ -144,6 +154,10 @@ CREATE TABLE `recharge_item`  (
 -- ----------------------------
 -- Records of recharge_item
 -- ----------------------------
+INSERT INTO `recharge_item` VALUES (1, '1元100个音乐币', 100, 1, '2024-06-08 14:45:16', '2024-06-08 14:45:16');
+INSERT INTO `recharge_item` VALUES (2, '5元1000个音乐币', 1000, 5, '2024-06-08 14:45:44', '2024-06-08 14:45:44');
+INSERT INTO `recharge_item` VALUES (3, '10元5000个音乐币', 5000, 10, '2024-06-08 14:46:08', '2024-06-08 14:46:08');
+INSERT INTO `recharge_item` VALUES (4, '15元10000个音乐币', 10000, 15, '2024-06-08 14:46:45', '2024-06-08 14:46:45');
 
 -- ----------------------------
 -- Table structure for user
@@ -165,6 +179,7 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, 'maskira', '$2b$12$H3aUAJ5N/qeGvzGjr1/xH.lDSnKanpTMqW8/1xdcniBu9.nCZTIKS', 100, NULL, '在签名中展现你的个性吧！', '2024-06-08 10:40:31', '2024-06-08 10:40:31');
+INSERT INTO `user` VALUES (1, 'maskira', '$2b$12$H3aUAJ5N/qeGvzGjr1/xH.lDSnKanpTMqW8/1xdcniBu9.nCZTIKS', 3100, NULL, '在签名中展现你的个性吧！', '2024-06-08 10:40:31', '2024-06-08 18:15:16');
+INSERT INTO `user` VALUES (2, 'mask', '$2b$12$VE40Aw6wWNhCL.npBwkwguKD4omebPO10mtL1sHPzhkVOOrmR1iq6', 1100, NULL, '在签名中展现你的个性吧！', '2024-06-08 18:15:16', '2024-06-08 18:15:16');
 
 SET FOREIGN_KEY_CHECKS = 1;
