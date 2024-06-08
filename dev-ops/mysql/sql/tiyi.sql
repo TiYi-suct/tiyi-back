@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 08/06/2024 09:43:59
+ Date: 08/06/2024 11:22:16
 */
 
 SET NAMES utf8mb4;
@@ -36,22 +36,32 @@ CREATE TABLE `analysis_item`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '音频分析项目' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of analysis_item
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for audio
 -- ----------------------------
 DROP TABLE IF EXISTS `audio`;
 CREATE TABLE `audio`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `audio_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '音频唯一id',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '音频原始名称',
   `extension` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '音频文件格式扩展名',
   `path` varchar(1023) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '音频文件的存储路径',
-  `tags` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '音频标签，如\"流行,乡村,摇滚,轻松\"',
+  `tags` varchar(1023) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '音频标签，如\"流行,乡村,摇滚,轻松\"',
   `cover` varchar(1023) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '音频封面url',
   `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '上传的用户名',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_username`(`username` ASC) USING BTREE
+  INDEX `idx_username`(`username` ASC) USING BTREE,
+  UNIQUE INDEX `audio_pk`(`audio_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '音频表，保存用户上传的音频信息' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of audio
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for audio_tags
@@ -65,6 +75,12 @@ CREATE TABLE `audio_tags`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户自定义标签表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of audio_tags
+-- ----------------------------
+INSERT INTO `audio_tags` VALUES (1, 'maskira', '治愈', '2024-06-08 10:28:49', '2024-06-08 10:57:26');
+INSERT INTO `audio_tags` VALUES (2, 'maska', '轻松', '2024-06-08 10:30:49', '2024-06-08 10:30:49');
 
 -- ----------------------------
 -- Table structure for order
@@ -81,6 +97,10 @@ CREATE TABLE `order`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of order
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for pay_flow
@@ -102,6 +122,10 @@ CREATE TABLE `pay_flow`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '支付流水表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of pay_flow
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for recharge_item
 -- ----------------------------
 DROP TABLE IF EXISTS `recharge_item`;
@@ -114,6 +138,10 @@ CREATE TABLE `recharge_item`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '充值项目表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of recharge_item
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for user
@@ -131,5 +159,10 @@ CREATE TABLE `user`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_pk`(`username` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES (1, 'maskira', '$2b$12$H3aUAJ5N/qeGvzGjr1/xH.lDSnKanpTMqW8/1xdcniBu9.nCZTIKS', 100, NULL, '在签名中展现你的个性吧！', '2024-06-08 10:40:31', '2024-06-08 10:40:31');
 
 SET FOREIGN_KEY_CHECKS = 1;

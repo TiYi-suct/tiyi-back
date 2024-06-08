@@ -13,7 +13,7 @@ class AudioService:
     def upload(file):
         # 检查文件
         if not file or file.filename == '':
-            return Response.error_default('请选择要上传的文件')
+            return Response.error('请选择要上传的文件')
         # 生成文件唯一id，作为文件名
         audio_id = uuid.uuid4().hex
         origin_name = file.filename.split('.')[0]
@@ -25,6 +25,7 @@ class AudioService:
         url = f'{Config.SERVER_URL}/audio/download/{filename}'
         # 将文件记录保存到数据库
         audio = Audio(
+            audio_id=audio_id,
             name=origin_name,
             extension=extension,
             path=filepath,
@@ -37,3 +38,15 @@ class AudioService:
             'audio_id': audio_id,
             'url': url
         })
+
+    @staticmethod
+    def labeling(username, audio_id, tags):
+        # 给音频打上标签
+        audio = Audio.query.filter_by(audio_id=audio_id).first()
+        if not audio:
+            return Response.error('音频不存在')
+        if audio.username != username:
+            return Response.error(f'非法操作，音频不属于用户：{username}')
+        audio.tags = tags
+        db.session.commit()
+        return Response.success()

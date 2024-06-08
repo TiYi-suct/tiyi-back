@@ -13,9 +13,9 @@ class Response:
         return {'code': code, 'msg': msg, 'data': data}, 200
 
     @staticmethod
-    def error(code: int, msg: str, data: object = ''):
+    def error_custom(code: int, msg: str, data: object = ''):
         return {'code': code, 'msg': msg, 'data': data}, 400
 
     @staticmethod
-    def error_default(msg: str):
+    def error(msg: str):
         return {'code': 1, 'msg': msg, 'data': ''}, 400
