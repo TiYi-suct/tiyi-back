@@ -2,12 +2,12 @@
 用户服务
 """
 import logging
-import uuid
+
+from flask_bcrypt import Bcrypt
 
 from model.models import User, db
 from utils.jwt_util import get_jwt_token
 from utils.response import Response
-from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
 

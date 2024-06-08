@@ -13,7 +13,7 @@ ALGORITHM = 'HS256'
 def get_jwt_token(load: object, expiration_minutes: int = 30):
     return jwt.encode({
         'load': load,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=expiration_minutes)
+        'exp': datetime.datetime.now() + datetime.timedelta(minutes=expiration_minutes)
     }, SECRET_KEY, algorithm=ALGORITHM)
 
 
