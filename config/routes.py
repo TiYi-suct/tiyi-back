@@ -2,7 +2,7 @@ from flask_restful import Api
 
 from controller.audio_controller import AudioUpload, AudioDownload, AudioLabeling, AudioController, AudioQuery
 from controller.audio_tags_controller import AudioTagsController
-from controller.user_controller import UserRegister, UserLogin
+from controller.user_controller import UserRegister, UserLogin, UserController
 
 
 def config_routes(app):
@@ -12,6 +12,7 @@ def config_routes(app):
     # api.add_resource(HelloController, '/hello')
 
     # 用户相关资源
+    api.add_resource(UserController, '/user')
     api.add_resource(UserRegister, '/user/register')
     api.add_resource(UserLogin, '/user/login')
 

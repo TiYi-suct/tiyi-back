@@ -20,6 +20,14 @@ class User(db.Model):
     create_time = db.Column(db.DateTime, default=datetime.now())
     update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'music_coin': self.music_coin,
+            'avatar': self.avatar,
+            'signature': self.signature
+        }
+
 
 """
 音频模型
