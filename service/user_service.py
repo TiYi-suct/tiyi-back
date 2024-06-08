@@ -14,6 +14,13 @@ bcrypt = Bcrypt()
 
 class UserService:
     @staticmethod
+    def get_user_by_username(username):
+        user = User.query.filter(User.username == username).one_or_none()
+        if not user:
+            return Response.error('用户不存在')
+        return Response.success(user.to_dict())
+
+    @staticmethod
     def register(data):
         # 检查数据
         if not data or not data.get('username') or not data.get('password'):
