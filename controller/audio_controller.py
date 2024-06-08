@@ -1,4 +1,4 @@
-from flask import request, send_from_directory
+from flask import request, send_from_directory, g
 from flask_restful import Resource
 
 from config.config import Config
@@ -20,3 +20,14 @@ class AudioDownload(Resource):
     @staticmethod
     def get(filename):
         return send_from_directory(Config.AUDIO_UPLOAD_FOLDER, filename)
+
+
+class AudioLabeling(Resource):
+    @login_required
+    def put(self):
+        data = request.json
+        if not data or not data.get('audio_id') or not data.get('tags'):
+            return Response.error('参数错误')
+        audio_id = data['audio_id']
+        tags = data['tags']
+        return AudioService.labeling(g.username, audio_id, tags)

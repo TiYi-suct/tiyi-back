@@ -29,11 +29,12 @@ class User(db.Model):
 class Audio(db.Model):
     __tablename__ = 'audio'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    audio_id = db.Column(db.String(255), unique=True, nullable=False)
     name = db.Column(db.String(255), nullable=False)
     extension = db.Column(db.String(255), nullable=False)
     path = db.Column(db.String(1023), unique=True, nullable=False)
-    tags = db.Column(db.String(1023), unique=True, nullable=False)
-    cover = db.Column(db.String(1023), nullable=True)
+    tags = db.Column(db.String(1023), unique=False, nullable=False)
+    cover = db.Column(db.String(1023), nullable=False)
     username = db.Column(db.String(255), nullable=False)
     create_time = db.Column(db.DateTime, default=datetime.now())
     update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())

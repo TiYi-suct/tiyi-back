@@ -1,6 +1,6 @@
 from flask_restful import Api
 
-from controller.audio_controller import AudioUpload, AudioDownload
+from controller.audio_controller import AudioUpload, AudioDownload, AudioLabeling
 from controller.audio_tags_controller import AudioTagsController
 from controller.user_controller import UserRegister, UserLogin
 
@@ -18,6 +18,7 @@ def config_routes(app):
     # 音频相关资源
     api.add_resource(AudioUpload, '/audio/upload')
     api.add_resource(AudioDownload, '/audio/download/<filename>')
+    api.add_resource(AudioLabeling, '/audio/labeling')
 
     # 音频标签相关资源
     api.add_resource(AudioTagsController, '/audio_tags')
