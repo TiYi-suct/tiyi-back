@@ -4,9 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-'''
+"""
 用户模型
-'''
+"""
 
 
 class User(db.Model):
@@ -21,9 +21,9 @@ class User(db.Model):
     update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
 
-'''
+"""
 音频模型
-'''
+"""
 
 
 class Audio(db.Model):
@@ -32,17 +32,29 @@ class Audio(db.Model):
     audio_id = db.Column(db.String(255), unique=True, nullable=False)
     name = db.Column(db.String(255), nullable=False)
     extension = db.Column(db.String(255), nullable=False)
-    path = db.Column(db.String(1023), unique=True, nullable=False)
+    local_path = db.Column(db.String(1023), unique=True, nullable=False)
+    url = db.Column(db.String(1023), unique=True, nullable=False)
     tags = db.Column(db.String(1023), unique=False, nullable=False)
     cover = db.Column(db.String(1023), nullable=False)
     username = db.Column(db.String(255), nullable=False)
     create_time = db.Column(db.DateTime, default=datetime.now())
     update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
+    def to_dict(self):
+        return {
+            'audio_id': self.audio_id,
+            'name': self.name,
+            'extension': self.extension,
+            'url': self.url,
+            'tags': self.tags.split(',') if self.tags else [],
+            'cover': self.cover,
+            'username': self.username
+        }
 
-'''
+
+"""
 用户定义音频标签模型
-'''
+"""
 
 
 class AudioTags(db.Model):
