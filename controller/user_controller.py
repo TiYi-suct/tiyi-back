@@ -1,7 +1,6 @@
-from flask import request, g
+from flask import request
 from flask_restful import Resource
 
-from interceptor.interceptor import login_required
 from service.user_service import UserService
 
 '''
@@ -10,8 +9,8 @@ from service.user_service import UserService
 
 
 class UserRegister(Resource):
-    @login_required
-    def post(self):
+    @staticmethod
+    def post():
         return UserService.register(request.json)
 
 

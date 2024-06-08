@@ -7,7 +7,7 @@ from model.models import db
 app = Flask(__name__)
 
 # 加载配置
-app.config.from_object(Config)
+app.config.from_object(Config())
 # 初始化数据库连接
 db.init_app(app)
 # 配置路由

@@ -19,3 +19,21 @@ class User(db.Model):
     signature = db.Column(db.String(1023), default='在签名中展现你的个性吧！')
     create_time = db.Column(db.DateTime, default=datetime.now())
     update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+
+'''
+音频模型
+'''
+
+
+class Audio(db.Model):
+    __tablename__ = 'audio'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255), nullable=False)
+    extension = db.Column(db.String(255), nullable=False)
+    path = db.Column(db.String(1023), unique=True, nullable=False)
+    tags = db.Column(db.String(1023), unique=True, nullable=False)
+    cover = db.Column(db.String(1023), nullable=True)
+    username = db.Column(db.String(255), nullable=False)
+    create_time = db.Column(db.DateTime, default=datetime.now())
+    update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
