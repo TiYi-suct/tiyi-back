@@ -10,6 +10,8 @@ from utils.response import Response
 
 
 class AudioService:
+    ALLOWED_EXTENSIONS = {'wav', 'mp3', 'ogg', 'flac'}
+
     @staticmethod
     def query_by_audio_id(username, audio_id):
         audio = Audio.query.filter_by(audio_id=audio_id).first()
@@ -53,15 +55,18 @@ class AudioService:
         # 检查文件
         if not file or file.filename == '':
             return Response.error('请选择要上传的文件')
+        # 检查文件格式
+        if not AudioService.allowed_file(file.filename):
+            return Response.error('不支持的文件格式，仅支持分析wav、mp3、ogg、flac格式')
+        extension = file.filename.split('.')[-1]
         # 生成文件唯一id，作为文件名
         audio_id = uuid.uuid4().hex
         origin_name = file.filename.split('.')[0]
-        extension = file.filename.split('.')[-1]
         filename = f'{audio_id}.{extension}'
-        filepath = os.path.join(Config.AUDIO_UPLOAD_FOLDER, filename)
+        filepath = os.path.join(Config.STORE_FOLDER, filename)
         # 将文件保存服务器
         file.save(filepath)
-        url = f'{Config.SERVER_URL}/audio/download/{filename}'
+        url = f'{Config.SERVER_URL}/file/{filename}'
         # 将文件记录保存到数据库
         audio = Audio(
             audio_id=audio_id,
@@ -78,6 +83,10 @@ class AudioService:
             'audio_id': audio_id,
             'url': url
         })
+
+    @staticmethod
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in AudioService.ALLOWED_EXTENSIONS
 
     @staticmethod
     def labeling(username, audio_id, tags):

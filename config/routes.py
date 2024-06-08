@@ -1,8 +1,9 @@
 from flask_restful import Api
 
 from controller.analysis_item_controller import AnalysisItemController, AnalysisItemConsumption
-from controller.audio_controller import AudioUpload, AudioDownload, AudioLabeling, AudioController, AudioQuery
+from controller.audio_controller import AudioUpload, AudioLabeling, AudioController, AudioQuery
 from controller.audio_tags_controller import AudioTagsController
+from controller.file_controller import FileController
 from controller.pay_controller import GetOrderInfo, PayResultNotify
 from controller.recharge_item_controller import RechargeItemController
 from controller.user_controller import UserRegister, UserLogin, UserController
@@ -23,7 +24,6 @@ def config_routes(app):
     api.add_resource(AudioController, '/audio')
     api.add_resource(AudioQuery, '/audio/list')
     api.add_resource(AudioUpload, '/audio/upload')
-    api.add_resource(AudioDownload, '/audio/download/<filename>')
     api.add_resource(AudioLabeling, '/audio/labeling')
 
     # 音频标签相关资源
@@ -39,3 +39,6 @@ def config_routes(app):
     # 支付相关资源
     api.add_resource(GetOrderInfo, '/pay/order_info_str')
     api.add_resource(PayResultNotify, '/pay/notify')
+
+    # 文件相关资源
+    api.add_resource(FileController, '/file', '/file/<string:filename>')
