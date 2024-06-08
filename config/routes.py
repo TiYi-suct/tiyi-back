@@ -1,6 +1,6 @@
 from flask_restful import Api
 
-from controller.analysis_item_controller import AnalysisItemController
+from controller.analysis_item_controller import AnalysisItemController, AnalysisItemConsumption
 from controller.audio_controller import AudioUpload, AudioDownload, AudioLabeling, AudioController, AudioQuery
 from controller.audio_tags_controller import AudioTagsController
 from controller.recharge_item_controller import RechargeItemController
@@ -30,6 +30,7 @@ def config_routes(app):
 
     # 分析项目相关资源
     api.add_resource(AnalysisItemController, '/analysis_item')
+    api.add_resource(AnalysisItemConsumption, '/analysis_item/consumption')
 
     # 充值项目相关资源
     api.add_resource(RechargeItemController, '/recharge_item')
