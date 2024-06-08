@@ -12,7 +12,7 @@ class AudioUpload(Resource):
     def post(self):
         # 检查是否存在文件
         if 'file' not in request.files:
-            return Response.error_default('请上传音频文件')
+            return Response.error('请上传音频文件')
         return AudioService.upload(request.files['file'])
 
 

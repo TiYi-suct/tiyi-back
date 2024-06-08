@@ -13,7 +13,7 @@ class AudioService:
     def upload(file):
         # 检查文件
         if not file or file.filename == '':
-            return Response.error_default('请选择要上传的文件')
+            return Response.error('请选择要上传的文件')
         # 生成文件唯一id，作为文件名
         audio_id = uuid.uuid4().hex
         origin_name = file.filename.split('.')[0]

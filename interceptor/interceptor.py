@@ -15,13 +15,11 @@ def login_required(f):
         # 检查用户是否携带token
         if 'Authorization' in request.headers:
             token = request.headers['Authorization']
-        print(token)
         if not token:
             return {'code': 1, 'msg': '用户未登录', 'data': ''}, 401
         # 检查token是否有效
         try:
             data = decode_token(token)
-            print(data)
             g.username = data['load']
         except jwt.ExpiredSignatureError:
             logging.error(f'Token已过期：{token}')

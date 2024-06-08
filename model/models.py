@@ -37,3 +37,17 @@ class Audio(db.Model):
     username = db.Column(db.String(255), nullable=False)
     create_time = db.Column(db.DateTime, default=datetime.now())
     update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+
+'''
+用户定义音频标签模型
+'''
+
+
+class AudioTags(db.Model):
+    __tablename__ = 'audio_tags'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(255), nullable=False)
+    tags = db.Column(db.String(1023), nullable=False)
+    create_time = db.Column(db.DateTime, default=datetime.now())
+    update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
