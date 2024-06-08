@@ -144,3 +144,24 @@ class Order(db.Model):
         unique_id = uuid.uuid4().hex
         out_trade_no = f"ORDER_{timestamp}_{unique_id[:32 - len('ORDER_') - len(timestamp) - 1]}"
         return out_trade_no
+
+
+'''
+支付流水模型
+'''
+
+
+class PayFlow(db.Model):
+    __tablename__ = 'pay_flow'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='主键id')
+    trade_no = db.Column(db.String(255), unique=True, nullable=False, comment='交易凭证')
+    subject = db.Column(db.String(255), nullable=False, comment='交易名称')
+    trade_status = db.Column(db.String(255), nullable=False, comment='交易状态')
+    out_trade_no = db.Column(db.String(255), unique=True, nullable=False, comment='商户订单号')
+    total_amount = db.Column(db.Double, nullable=False, comment='交易金额')
+    buyer_id = db.Column(db.String(255), nullable=False, comment='支付用户id')
+    gmt_payment = db.Column(db.String(255), nullable=False, comment='付款时间')
+    buyer_pay_amount = db.Column(db.Double, nullable=False, comment='付款金额')
+    create_time = db.Column(db.DateTime, default=datetime.now(), comment='创建时间')
+    update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now(), comment='更新时间')

@@ -21,3 +21,4 @@ class Config:
     CHARSET = os.getenv('CHARSET')
     FORMAT = os.getenv('FORMAT')
     SIGN_TYPE = os.getenv('SIGN_TYPE')
+    NOTIFY_URL= SERVER_URL + os.getenv('NOTIFY_URL')
