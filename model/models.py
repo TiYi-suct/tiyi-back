@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
@@ -106,7 +107,7 @@ class RechargeItem(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='主键id')
     title = db.Column(db.String(255), nullable=False, comment='充值项标题，如“1元100个音乐币，10元2000个音乐币”等')
     amount = db.Column(db.Integer, nullable=False, comment='音乐币数量')
-    price = db.Column(db.Float, nullable=False, comment='价格')
+    price = db.Column(db.Double, nullable=False, comment='价格')
     create_time = db.Column(db.DateTime, nullable=True, default=datetime.now, comment='创建时间')
     update_time = db.Column(db.DateTime, nullable=True, default=datetime.now, onupdate=datetime.now, comment='更新时间')
 
@@ -117,3 +118,29 @@ class RechargeItem(db.Model):
             'amount': self.amount,
             'price': self.price
         }
+
+
+'''
+充值订单模型
+'''
+
+
+class Order(db.Model):
+    __tablename__ = 'order'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='主键id')
+    username = db.Column(db.String(255), nullable=False, comment='用户名')
+    out_trade_no = db.Column(db.String(255), nullable=False, comment='订单号')
+    recharge_title = db.Column(db.String(255), nullable=False, comment='充值项标题')
+    amount = db.Column(db.Integer, nullable=False, comment='音乐币数量')
+    price = db.Column(db.Double, nullable=False, comment='订单金额')
+    create_time = db.Column(db.DateTime, default=datetime.now, comment='创建时间')
+    update_time = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, comment='更新时间')
+
+    @staticmethod
+    def generate_out_trade_no():
+        # 基于当前时间戳和UUID生成唯一订单号
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        unique_id = uuid.uuid4().hex
+        out_trade_no = f"ORDER_{timestamp}_{unique_id[:32 - len('ORDER_') - len(timestamp) - 1]}"
+        return out_trade_no

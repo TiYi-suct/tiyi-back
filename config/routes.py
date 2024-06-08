@@ -3,6 +3,7 @@ from flask_restful import Api
 from controller.analysis_item_controller import AnalysisItemController, AnalysisItemConsumption
 from controller.audio_controller import AudioUpload, AudioDownload, AudioLabeling, AudioController, AudioQuery
 from controller.audio_tags_controller import AudioTagsController
+from controller.pay_controller import GetOrderInfo
 from controller.recharge_item_controller import RechargeItemController
 from controller.user_controller import UserRegister, UserLogin, UserController
 
@@ -34,3 +35,7 @@ def config_routes(app):
 
     # 充值项目相关资源
     api.add_resource(RechargeItemController, '/recharge_item')
+
+    # 支付相关资源
+    api.add_resource(GetOrderInfo, '/pay/order_info_str')
+
