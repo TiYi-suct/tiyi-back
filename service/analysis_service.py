@@ -77,7 +77,8 @@ def deduct_music_coin(username, analysis_item_name):
         user.music_coin -= analysis_item.price
         db.session.commit()
         return True
-    except:
+    except Exception as e:
+        logging.error(f'扣减用户音乐币异常，用户名：{username}，分析项：{analysis_item_name}，错误信息：{e}')
         db.session.rollback()
         return False
 
@@ -92,8 +93,8 @@ def return_music_coin(username, analysis_item_name):
         user.music_coin += analysis_item.price
         db.session.commit()
         return True
-    except:
-        logging.error(f'返还音乐币出现异常，用户：{username}，数量：{analysis_item.price}')
+    except Exception as e:
+        logging.error(f'返还音乐币出现异常，用户：{username}，数量：{analysis_item.price}，错误信息：{e}')
         db.session.rollback()
         return False
 
@@ -105,9 +106,6 @@ def get_audio_segment(audio_id, start_time, end_time):
         raise AudioNotFoundError('音频记录不存在')
     # 加载音频文件，
     y, sr = librosa.load(audio.local_path, sr=None)
-    # 打印采样率和音频数据长度以进行调试
-    print(f"Sample rate: {sr}")
-    print(f"Audio length: {len(y)} samples")
 
     # 转换起始时间和结束时间为样本索引
     start_sample = int(start_time * sr)
@@ -127,34 +125,55 @@ def get_audio_segment(audio_id, start_time, end_time):
     return y, sr
 
 
+# 音频不存在
 class AudioNotFoundError(Exception):
     pass
 
 
+# 截取范围异常
 class InvalidBoundError(Exception):
     pass
+
+
+# 保存图片，返回远程访问地址
+def save_analysis_img():
+    filename = uuid.uuid4().hex + '.png'
+    image_path = f'{Config.STORE_FOLDER}/{filename}'
+    plt.savefig(image_path, format='png')
+    plt.close()
+    url = f'{Config.SERVER_URL}/file/{filename}'
+    return url
 
 
 @analysis_process('梅尔频谱图')
 def mel_spectrogram(audio_id, start_time, end_time):
     y, sr = get_audio_segment(audio_id, start_time, end_time)
     # 计算梅尔频谱图
-    mel = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)
-    mel_spectrogram_db = librosa.power_to_db(mel, ref=np.max)
-    # 创建绘图
-    fig, ax = plt.subplots(figsize=(10, 4))
-    img = librosa.display.specshow(mel_spectrogram_db, sr=sr, x_axis='time', y_axis='mel', ax=ax)
-    fig.colorbar(img, ax=ax, format='%+2.0f dB')
-    ax.set(title='Mel Spectrogram')
-    # 保存图像到内存文件
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    plt.close(fig)
-    filename = uuid.uuid4().hex + '.png'
+    mel = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)  # type: ignore
+    # 转换为分贝
+    S_db = librosa.power_to_db(mel, ref=np.max)
+    # 绘制梅尔频谱图
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(S_db, sr=sr, x_axis='time', y_axis='mel')
+    plt.colorbar(format='%+2.0f dB')
+    plt.title('Mel Spectrogram')
+    plt.tight_layout()
     # 将图像保存到本地
-    image_path = f'{Config.STORE_FOLDER}/{filename}'
-    with open(image_path, 'wb') as f:
-        f.write(buf.getbuffer())
-    url = f'{Config.SERVER_URL}/file/{filename}'
+    url = save_analysis_img()
+    return Response.success(url)
+
+
+@analysis_process('频谱图')
+def spectrogram(audio_id, start_time, end_time):
+    y, sr = get_audio_segment(audio_id, start_time, end_time)
+    # 计算短时傅里叶变换（STFT）
+    D = librosa.stft(y)
+    S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+    # 绘制频谱图
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(S_db, x_axis='time', y_axis='log')
+    plt.colorbar(format='%+2.0f dB')
+    plt.title('Spectrogram')
+    plt.tight_layout()
+    url = save_analysis_img()
     return Response.success(url)
