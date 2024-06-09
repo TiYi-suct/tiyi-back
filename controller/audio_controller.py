@@ -61,3 +61,5 @@ class AudioLabeling(Resource):
         audio_id = data['audio_id']
         tags = data['tags']
         return AudioService.labeling(g.username, audio_id, tags)
+
+
