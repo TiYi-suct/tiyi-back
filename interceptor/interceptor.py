@@ -1,5 +1,4 @@
 import logging
-import uuid
 from functools import wraps
 
 import jwt
