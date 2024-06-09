@@ -63,13 +63,20 @@ class PayService:
         if not success:
             logging.error(f'验签失败：{data}')
             return
-        # 验签通过，检查支付状态
-        trade_status = data.get('trade_status')
+
+        # 查询订单信息
+        out_trade_no = data.get('out_trade_no')
+        order = Order.query.filter(Order.out_trade_no == out_trade_no).one_or_none()
+        if not order:
+            logging.error(f'订单未找到：{out_trade_no}，支付流水信息：{data}')
+            db.session.commit()
+            return
         # 记录支付流水
         pay_flow = PayFlow(
+            username=order.username,
             trade_no=data.get('trade_no'),
             subject=data.get('subject'),
-            trade_status=trade_status,
+            trade_status=data.get('trade_status'),
             out_trade_no=data.get('out_trade_no'),
             total_amount=data.get('total_amount'),
             buyer_id=data.get('buyer_id'),
@@ -77,19 +84,14 @@ class PayService:
             buyer_pay_amount=data.get('buyer_pay_amount')
         )
         db.session.add(pay_flow)
+        # 检查支付状态
+        trade_status = data.get('trade_status')
         # 支付异常，不增加用户的音乐币数量
         if not trade_status == 'TRADE_SUCCESS':
             logging.error(f'支付异常：{trade_status}，回调数据：{data}')
             db.session.commit()
             return
-        # 支付成功，查询订单信息
-        out_trade_no = data.get('out_trade_no')
-        order = Order.query.filter(Order.out_trade_no == out_trade_no).one_or_none()
-        if not order:
-            logging.error(f'订单未找到：{out_trade_no}')
-            db.session.commit()
-            return
-        # 更新用户音乐币数量
+        # 支付成功，更新用户音乐币数量
         user = User.query.filter(User.username == order.username).one_or_none()
         if not user:
             logging.error(f'用户未找到：{order.username}')
