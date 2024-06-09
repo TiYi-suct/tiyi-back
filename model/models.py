@@ -155,6 +155,7 @@ class PayFlow(db.Model):
     __tablename__ = 'pay_flow'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='主键id')
+    username = db.Column(db.String(255), nullable=False, comment='用户名')
     trade_no = db.Column(db.String(255), unique=True, nullable=False, comment='交易凭证')
     subject = db.Column(db.String(255), nullable=False, comment='交易名称')
     trade_status = db.Column(db.String(255), nullable=False, comment='交易状态')
