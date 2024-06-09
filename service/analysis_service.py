@@ -2,19 +2,18 @@
 音频分析服务
 """
 import inspect
-import io
 import logging
-import uuid
+from concurrent.futures import ProcessPoolExecutor
 from functools import wraps
 
-import librosa
-import numpy as np
 from flask import g
-from matplotlib import pyplot as plt
 
-from config.config import Config
-from model.models import Audio, User, AnalysisItem, db
+from model.models import User, AnalysisItem, db, Audio
+from service.analysis_tasks import mel_task, spec_task
 from utils.response import Response
+
+# 全局进程池，处理绘图多线程安全问题
+executor = ProcessPoolExecutor(max_workers=4)
 
 """
 音频分析流程装饰器：
@@ -49,7 +48,7 @@ def analysis_process(analysis_item_name):
             # todo 优先从本地获取结果
 
             try:
-                # 进行音频分析
+                # 在单独的进程中进行音频分析
                 result = f(*args, **kwargs)
                 # todo 返回结果之前先缓存记录
                 return result
@@ -99,81 +98,26 @@ def return_music_coin(username, analysis_item_name):
         return False
 
 
-# 截取音频片段，以秒为单位
-def get_audio_segment(audio_id, start_time, end_time):
+# 获取音频文件路径
+def get_audio_path(audio_id):
     audio = Audio.query.filter_by(audio_id=audio_id).first()
     if not audio:
         raise AudioNotFoundError('音频记录不存在')
-    # 加载音频文件，
-    y, sr = librosa.load(audio.local_path, sr=None)
+    return audio.local_path
 
-    # 转换起始时间和结束时间为样本索引
-    start_sample = int(start_time * sr)
-    end_sample = int(end_time * sr) if end_time > 0 else len(y)
 
-    # 检查起始时间范围
-    if start_sample > len(y) or start_sample > end_sample:
-        raise InvalidBoundError(
-            f'范围参数错误，开始时间：{start_time}，结束时间：{end_time}，开始索引：{start_sample}，结束索引：{end_sample}，实际范围：{len(y)}')
+@analysis_process('梅尔频谱图')
+def mel_spectrogram(audio_id, start_time, end_time):
+    path = get_audio_path(audio_id)
+    return Response.success(executor.submit(mel_task, path, start_time, end_time).result())
 
-    # 确保索引不超出范围
-    start_sample = max(0, start_sample)
-    end_sample = min(len(y), end_sample)
 
-    # 截取指定的音频片段
-    y = y[start_sample:end_sample]
-    return y, sr
+@analysis_process('频谱图')
+def spectrogram(audio_id, start_time, end_time):
+    path = get_audio_path(audio_id)
+    return Response.success(executor.submit(spec_task, path, start_time, end_time).result())
 
 
 # 音频不存在
 class AudioNotFoundError(Exception):
     pass
-
-
-# 截取范围异常
-class InvalidBoundError(Exception):
-    pass
-
-
-# 保存图片，返回远程访问地址
-def save_analysis_img():
-    filename = uuid.uuid4().hex + '.png'
-    image_path = f'{Config.STORE_FOLDER}/{filename}'
-    plt.savefig(image_path, format='png')
-    plt.close()
-    url = f'{Config.SERVER_URL}/file/{filename}'
-    return url
-
-
-@analysis_process('梅尔频谱图')
-def mel_spectrogram(audio_id, start_time, end_time):
-    y, sr = get_audio_segment(audio_id, start_time, end_time)
-    # 计算梅尔频谱图
-    mel = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)  # type: ignore
-    # 转换为分贝
-    S_db = librosa.power_to_db(mel, ref=np.max)
-    # 绘制梅尔频谱图
-    plt.figure(figsize=(10, 4))
-    librosa.display.specshow(S_db, sr=sr, x_axis='time', y_axis='mel')
-    plt.colorbar(format='%+2.0f dB')
-    plt.title('Mel Spectrogram')
-    plt.tight_layout()
-    # 将图像保存到本地
-    url = save_analysis_img()
-    return Response.success(url)
-
-
-@analysis_process('频谱图')
-def spectrogram(audio_id, start_time, end_time):
-    y, sr = get_audio_segment(audio_id, start_time, end_time)
-    # 计算短时傅里叶变换（STFT）
-    D = librosa.stft(y)
-    S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
-    # 绘制频谱图
-    plt.figure(figsize=(10, 4))
-    librosa.display.specshow(S_db, x_axis='time', y_axis='log')
-    plt.colorbar(format='%+2.0f dB')
-    plt.title('Spectrogram')
-    plt.tight_layout()
-    url = save_analysis_img()
-    return Response.success(url)
