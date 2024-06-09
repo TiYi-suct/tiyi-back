@@ -2,19 +2,18 @@
 音频分析服务
 """
 import inspect
-import io
 import logging
-import uuid
+from concurrent.futures import ProcessPoolExecutor
 from functools import wraps
 
-import librosa
-import numpy as np
 from flask import g
-from matplotlib import pyplot as plt
 
-from config.config import Config
-from model.models import Audio, User, AnalysisItem, db
+from model.models import User, AnalysisItem, db, Audio
+from service.analysis_tasks import mel_spectrogram_task, spectrogram_task, bpm_task
 from utils.response import Response
+
+# 全局进程池，处理绘图多线程安全问题
+executor = ProcessPoolExecutor(max_workers=4)
 
 """
 音频分析流程装饰器：
@@ -49,7 +48,7 @@ def analysis_process(analysis_item_name):
             # todo 优先从本地获取结果
 
             try:
-                # 进行音频分析
+                # 在单独的进程中进行音频分析
                 result = f(*args, **kwargs)
                 # todo 返回结果之前先缓存记录
                 return result
@@ -77,7 +76,8 @@ def deduct_music_coin(username, analysis_item_name):
         user.music_coin -= analysis_item.price
         db.session.commit()
         return True
-    except:
+    except Exception as e:
+        logging.error(f'扣减用户音乐币异常，用户名：{username}，分析项：{analysis_item_name}，错误信息：{e}')
         db.session.rollback()
         return False
 
@@ -92,69 +92,38 @@ def return_music_coin(username, analysis_item_name):
         user.music_coin += analysis_item.price
         db.session.commit()
         return True
-    except:
-        logging.error(f'返还音乐币出现异常，用户：{username}，数量：{analysis_item.price}')
+    except Exception as e:
+        logging.error(f'返还音乐币出现异常，用户：{username}，数量：{analysis_item.price}，错误信息：{e}')
         db.session.rollback()
         return False
 
 
-# 截取音频片段，以秒为单位
-def get_audio_segment(audio_id, start_time, end_time):
+# 获取音频文件路径
+def get_audio_path(audio_id):
     audio = Audio.query.filter_by(audio_id=audio_id).first()
     if not audio:
         raise AudioNotFoundError('音频记录不存在')
-    # 加载音频文件，
-    y, sr = librosa.load(audio.local_path, sr=None)
-    # 打印采样率和音频数据长度以进行调试
-    print(f"Sample rate: {sr}")
-    print(f"Audio length: {len(y)} samples")
-
-    # 转换起始时间和结束时间为样本索引
-    start_sample = int(start_time * sr)
-    end_sample = int(end_time * sr) if end_time > 0 else len(y)
-
-    # 检查起始时间范围
-    if start_sample > len(y) or start_sample > end_sample:
-        raise InvalidBoundError(
-            f'范围参数错误，开始时间：{start_time}，结束时间：{end_time}，开始索引：{start_sample}，结束索引：{end_sample}，实际范围：{len(y)}')
-
-    # 确保索引不超出范围
-    start_sample = max(0, start_sample)
-    end_sample = min(len(y), end_sample)
-
-    # 截取指定的音频片段
-    y = y[start_sample:end_sample]
-    return y, sr
-
-
-class AudioNotFoundError(Exception):
-    pass
-
-
-class InvalidBoundError(Exception):
-    pass
+    return audio.local_path
 
 
 @analysis_process('梅尔频谱图')
 def mel_spectrogram(audio_id, start_time, end_time):
-    y, sr = get_audio_segment(audio_id, start_time, end_time)
-    # 计算梅尔频谱图
-    mel = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)
-    mel_spectrogram_db = librosa.power_to_db(mel, ref=np.max)
-    # 创建绘图
-    fig, ax = plt.subplots(figsize=(10, 4))
-    img = librosa.display.specshow(mel_spectrogram_db, sr=sr, x_axis='time', y_axis='mel', ax=ax)
-    fig.colorbar(img, ax=ax, format='%+2.0f dB')
-    ax.set(title='Mel Spectrogram')
-    # 保存图像到内存文件
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    plt.close(fig)
-    filename = uuid.uuid4().hex + '.png'
-    # 将图像保存到本地
-    image_path = f'{Config.STORE_FOLDER}/{filename}'
-    with open(image_path, 'wb') as f:
-        f.write(buf.getbuffer())
-    url = f'{Config.SERVER_URL}/file/{filename}'
-    return Response.success(url)
+    path = get_audio_path(audio_id)
+    return Response.success(executor.submit(mel_spectrogram_task, path, start_time, end_time).result())
+
+
+@analysis_process('频谱图')
+def spectrogram(audio_id, start_time, end_time):
+    path = get_audio_path(audio_id)
+    return Response.success(executor.submit(spectrogram_task, path, start_time, end_time).result())
+
+
+@analysis_process('BPM')
+def bpm(audio_id, start_time, end_time):
+    path = get_audio_path(audio_id)
+    return Response.success(executor.submit(bpm_task, path, start_time, end_time).result())
+
+
+# 音频不存在
+class AudioNotFoundError(Exception):
+    pass

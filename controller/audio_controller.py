@@ -1,7 +1,6 @@
-from flask import request, send_from_directory, g
+from flask import request, g
 from flask_restful import Resource
 
-from config.config import Config
 from interceptor.interceptor import login_required
 from service.audio_service import AudioService
 from utils.response import Response
@@ -61,5 +60,3 @@ class AudioLabeling(Resource):
         audio_id = data['audio_id']
         tags = data['tags']
         return AudioService.labeling(g.username, audio_id, tags)
-
-
