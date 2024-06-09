@@ -1,6 +1,6 @@
 from flask_restful import Api
 
-from controller.analysis_controller import MelSpectrogram, Spectrogram
+from controller.analysis_controller import MelSpectrogram, Spectrogram, BPM
 from controller.analysis_item_controller import AnalysisItemController, AnalysisItemConsumption
 from controller.audio_controller import AudioUpload, AudioLabeling, AudioController, AudioQuery
 from controller.audio_tags_controller import AudioTagsController
@@ -47,3 +47,4 @@ def config_routes(app):
     # 音频分析相关资源
     api.add_resource(MelSpectrogram, '/analysis/mel_spectrogram')
     api.add_resource(Spectrogram, '/analysis/spectrogram')
+    api.add_resource(BPM, '/analysis/bpm')

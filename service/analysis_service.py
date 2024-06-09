@@ -9,7 +9,7 @@ from functools import wraps
 from flask import g
 
 from model.models import User, AnalysisItem, db, Audio
-from service.analysis_tasks import mel_task, spec_task
+from service.analysis_tasks import mel_spectrogram_task, spectrogram_task, bpm_task
 from utils.response import Response
 
 # 全局进程池，处理绘图多线程安全问题
@@ -109,13 +109,19 @@ def get_audio_path(audio_id):
 @analysis_process('梅尔频谱图')
 def mel_spectrogram(audio_id, start_time, end_time):
     path = get_audio_path(audio_id)
-    return Response.success(executor.submit(mel_task, path, start_time, end_time).result())
+    return Response.success(executor.submit(mel_spectrogram_task, path, start_time, end_time).result())
 
 
 @analysis_process('频谱图')
 def spectrogram(audio_id, start_time, end_time):
     path = get_audio_path(audio_id)
-    return Response.success(executor.submit(spec_task, path, start_time, end_time).result())
+    return Response.success(executor.submit(spectrogram_task, path, start_time, end_time).result())
+
+
+@analysis_process('BPM')
+def bpm(audio_id, start_time, end_time):
+    path = get_audio_path(audio_id)
+    return Response.success(executor.submit(bpm_task, path, start_time, end_time).result())
 
 
 # 音频不存在

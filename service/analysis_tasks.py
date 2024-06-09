@@ -11,7 +11,8 @@ from config.config import Config
 matplotlib.use('Agg')
 
 
-def mel_task(path, start_time, end_time):
+# 梅尔频谱图
+def mel_spectrogram_task(path, start_time, end_time):
     y, sr = get_audio_segment(path, start_time, end_time)
     # 计算梅尔频谱图
     mel = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)  # type: ignore
@@ -27,7 +28,8 @@ def mel_task(path, start_time, end_time):
     return save_analysis_img()
 
 
-def spec_task(path, start_time, end_time):
+# 频谱图
+def spectrogram_task(path, start_time, end_time):
     y, sr = get_audio_segment(path, start_time, end_time)
     # 计算短时傅里叶变换（STFT）
     D = librosa.stft(y)
@@ -39,6 +41,15 @@ def spec_task(path, start_time, end_time):
     plt.title('Spectrogram')
     plt.tight_layout()
     return save_analysis_img()
+
+
+# BPM
+def bpm_task(path, start_time, end_time):
+    y, sr = get_audio_segment(path, start_time, end_time)
+    # 监测节拍
+    tempo, beats = librosa.beat.beat_track(y=y, sr=sr)
+    # BPM只有一个数
+    return tempo.item()
 
 
 # 截取音频片段，以秒为单位
