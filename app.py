@@ -1,3 +1,5 @@
+import os.path
+
 from flask import Flask
 
 from config.config import Config
@@ -12,6 +14,9 @@ app.config.from_object(Config())
 db.init_app(app)
 # 配置路由
 config_routes(app)
+# 在当前工作区创建存储目录
+if not os.path.exists(Config.STORE_FOLDER):
+    os.makedirs(Config.STORE_FOLDER)
 
 if __name__ == '__main__':
     app.run()

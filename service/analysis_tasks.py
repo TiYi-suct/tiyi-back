@@ -24,7 +24,7 @@ def mel_spectrogram_task(path, start_time, end_time):
     # 转换为分贝
     S_db = librosa.power_to_db(mel, ref=np.max)
     # 绘制梅尔频谱图
-    plt.figure(figsize=(10, 4))
+    plt.figure(figsize=(calc_fig_width(y, sr), 6))
     librosa.display.specshow(S_db, sr=sr, x_axis='time', y_axis='mel')
     plt.colorbar(format='%+2.0f dB')
     plt.title('Mel Spectrogram')
@@ -40,7 +40,7 @@ def spectrogram_task(path, start_time, end_time):
     D = librosa.stft(y)
     S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
     # 绘制频谱图
-    plt.figure(figsize=(10, 4))
+    plt.figure(figsize=(calc_fig_width(y, sr), 6))
     librosa.display.specshow(S_db, x_axis='time', y_axis='log')
     plt.colorbar(format='%+2.0f dB')
     plt.title('Spectrogram')
@@ -64,6 +64,23 @@ def transposition_task(path, start_time, end_time, n_steps):
     y_shifted = librosa.effects.pitch_shift(y=y, sr=sr, n_steps=n_steps)
     # 将音频保存到本地，返回url
     return save_analysis_audio(y_shifted, sr, get_ext(path))
+
+
+# MFCC
+def mfcc_task(path, start_time, end_time, n_mfcc=20):
+    y, sr = get_audio_segment(path, start_time, end_time)
+    # 计算MFCC
+    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)  # type: ignore
+    # 绘图
+    plt.figure(figsize=(calc_fig_width(y, sr), 2 * n_mfcc))
+    for i in range(n_mfcc):
+        plt.subplot(n_mfcc, 1, i + 1)
+        plt.plot(mfccs[i])
+        plt.title(f'MFCC Coefficient {i + 1}')
+        plt.xlabel('Time Frame')
+        plt.ylabel('Amplitude')
+    plt.tight_layout()
+    return save_analysis_img()
 
 
 # 截取音频片段，以秒为单位
@@ -111,6 +128,17 @@ def save_analysis_audio(y, sr, ext):
     sf.write(audio_path, y, sr, format=ext)
     url = f'{Config.SERVER_URL}/file/{filename}'
     return url
+
+
+# 每秒对应的图形宽度
+width_per_second = 0.5
+
+
+# 计算图片的宽度：与音频的长度有关
+def calc_fig_width(y, sr):
+    duration = librosa.get_duration(y=y, sr=sr)
+    width = duration * width_per_second
+    return width if width > 10 else 10
 
 
 # 截取范围异常
