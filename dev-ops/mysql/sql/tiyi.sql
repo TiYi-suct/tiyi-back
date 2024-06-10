@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 10/06/2024 12:38:07
+ Date: 10/06/2024 17:15:08
 */
 
 SET NAMES utf8mb4;
@@ -66,11 +66,16 @@ CREATE TABLE `audio`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `audio_pk`(`audio_id` ASC) USING BTREE,
   INDEX `idx_username`(`username` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '音频表，保存用户上传的音频信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '音频表，保存用户上传的音频信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of audio
 -- ----------------------------
+INSERT INTO `audio` VALUES (5, '10e0e16c66d74b5d802db3c30aa41730', 'sample-15s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41730.wav', 'http://127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41730.wav', '流行,轻松', NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
+INSERT INTO `audio` VALUES (6, 'a94613d074ce41e487d0897a2f23918d', '卡农', 'flac', './files/a94613d074ce41e487d0897a2f23918d.flac', 'http://127.0.0.1:5000/file/a94613d074ce41e487d0897a2f23918d.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
+INSERT INTO `audio` VALUES (7, '58368ded826e4a0490bda7030a230200', '朴树-平凡之路', 'flac', './files/58368ded826e4a0490bda7030a230200.flac', 'http://127.0.0.1:5000/file/58368ded826e4a0490bda7030a230200.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (8, '2ef625823646459791f10f53c7218ed6', '陈慧琳-阁楼', 'mp3', './files/2ef625823646459791f10f53c7218ed6.mp3', 'http://127.0.0.1:5000/file/2ef625823646459791f10f53c7218ed6.mp3', NULL, NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (9, '1d97e4eb015449319df0b7240ca08d46', '周杰伦-稻香', 'mp3', './files/1d97e4eb015449319df0b7240ca08d46.mp3', 'http://127.0.0.1:5000/file/1d97e4eb015449319df0b7240ca08d46.mp3', '流行,治愈', NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
 
 -- ----------------------------
 -- Table structure for audio_tags
@@ -83,13 +88,13 @@ CREATE TABLE `audio_tags`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户自定义标签表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户自定义标签表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of audio_tags
 -- ----------------------------
 INSERT INTO `audio_tags` VALUES (1, 'maskira', '治愈,流行,乡村,摇滚', '2024-06-08 10:28:49', '2024-06-08 10:57:26');
-INSERT INTO `audio_tags` VALUES (2, 'maska', '轻松,悲伤', '2024-06-08 10:30:49', '2024-06-08 10:30:49');
+INSERT INTO `audio_tags` VALUES (3, 'mask', '治愈,轻松,摇滚,慢摇,流行', '2024-06-10 16:42:03', '2024-06-10 16:42:03');
 
 -- ----------------------------
 -- Table structure for order
@@ -105,7 +110,7 @@ CREATE TABLE `order`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of order
@@ -133,7 +138,7 @@ CREATE TABLE `pay_flow`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '支付流水表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '支付流水表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_flow
@@ -186,6 +191,6 @@ CREATE TABLE `user`  (
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES (1, 'maskira', '$2b$12$H3aUAJ5N/qeGvzGjr1/xH.lDSnKanpTMqW8/1xdcniBu9.nCZTIKS', 3100, NULL, '在签名中展现你的个性吧！', '2024-06-08 10:40:31', '2024-06-10 11:33:32');
-INSERT INTO `user` VALUES (2, 'mask', '$2b$12$VE40Aw6wWNhCL.npBwkwguKD4omebPO10mtL1sHPzhkVOOrmR1iq6', 1100, NULL, '在签名中展现你的个性吧！', '2024-06-08 18:15:16', '2024-06-08 18:15:16');
+INSERT INTO `user` VALUES (2, 'mask', '$2b$12$VE40Aw6wWNhCL.npBwkwguKD4omebPO10mtL1sHPzhkVOOrmR1iq6', 1100, NULL, '在签名中展现你的个性吧！', '2024-06-08 18:15:16', '2024-06-10 16:56:14');
 
 SET FOREIGN_KEY_CHECKS = 1;

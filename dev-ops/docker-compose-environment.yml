@@ -16,7 +16,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./dev-ops/mysql/sql:/docker-entrypoint-initdb.d
+      - ./mysql/sql:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 5s
@@ -41,7 +41,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ./dev-ops/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
     networks:
       - tiyi-network
