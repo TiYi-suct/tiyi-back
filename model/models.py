@@ -37,17 +37,19 @@ class User(db.Model):
 
 class Audio(db.Model):
     __tablename__ = 'audio'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    audio_id = db.Column(db.String(255), unique=True, nullable=False)
-    name = db.Column(db.String(255), nullable=False)
-    extension = db.Column(db.String(255), nullable=False)
-    local_path = db.Column(db.String(1023), unique=True, nullable=False)
-    url = db.Column(db.String(1023), unique=True, nullable=False)
-    tags = db.Column(db.String(1023), unique=False, nullable=False)
-    cover = db.Column(db.String(1023), nullable=False)
-    username = db.Column(db.String(255), nullable=False)
-    create_time = db.Column(db.DateTime, default=datetime.now())
-    update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='主键id')
+    audio_id = db.Column(db.String(255), unique=True, nullable=False, comment='音频唯一id')
+    name = db.Column(db.String(255), nullable=False, comment='音频原始名称')
+    extension = db.Column(db.String(255), nullable=False, comment='音频文件格式扩展名')
+    local_path = db.Column(db.String(1023), unique=True, nullable=False, comment='音频文件的服务器本地存储路径')
+    url = db.Column(db.String(1023), unique=True, nullable=False, comment='音频文件远程访问地址')
+    tags = db.Column(db.String(1023), unique=False, nullable=True, comment='音频标签，如"流行,乡村,摇滚,轻松"')
+    cover = db.Column(db.String(1023), nullable=True, comment='音频封面url')
+    description = db.Column(db.String(1023), nullable=True, comment='音频描述')
+    username = db.Column(db.String(255), nullable=False, comment='上传的用户名')
+    confirmed = db.Column(db.Boolean, nullable=False, default=False, comment='保留字段，用户是否确定保存这条音频记录')
+    create_time = db.Column(db.DateTime, default=datetime.now(), comment='创建时间')
+    update_time = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now(), comment='更新时间')
 
     def to_dict(self):
         return {
@@ -57,6 +59,7 @@ class Audio(db.Model):
             'url': self.url,
             'tags': self.tags.split(',') if self.tags else [],
             'cover': self.cover,
+            'description': self.description,
             'username': self.username
         }
 
@@ -84,6 +87,7 @@ class AnalysisItem(db.Model):
     __tablename__ = 'analysis_item'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='主键id')
     name = db.Column(db.String(255), nullable=False, unique=True, comment='音频分析项名称，如BPM、频谱等')
+    description = db.Column(db.String(1023), default='', comment='音频分析项描述')
     price = db.Column(db.Integer, nullable=False, default=0, comment='消耗音乐币数量')
     create_time = db.Column(db.DateTime, nullable=True, default=datetime.now(), comment='创建时间')
     update_time = db.Column(db.DateTime, nullable=True, default=datetime.now(), onupdate=datetime.now(), comment='更新时间')
@@ -92,6 +96,7 @@ class AnalysisItem(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'description': self.description,
             'price': self.price
         }
 
