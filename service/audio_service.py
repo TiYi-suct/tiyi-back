@@ -1,3 +1,4 @@
+import logging
 import os
 import uuid
 
@@ -33,9 +34,40 @@ class AudioService:
         return Response.success()
 
     @staticmethod
+    def save_audio(username, data):
+        audio = Audio.query.filter_by(audio_id=data.get('audio_id')).first()
+        if not audio:
+            logging.error(f"上传音频未找到。音频ID：{data.get('audio_id')}")
+            return Response.error('请先上传音频')
+        if not username == audio.username:
+            logging.error(f'非法操作：音频不属于用户。用户：{username}，音频：{audio.to_dict()}')
+            return Response.error(f'非法操作，禁止操作不属于自己的音频')
+        # 更新数据库记录
+        tags = data.get('tags')
+        cover = data.get('cover')
+        description = data.get('description')
+        if tags is not None:
+            audio.tags = tags
+        if cover is not None:
+            audio.cover = cover
+        if description is not None:
+            audio.description = description
+        audio.confirmed = True
+        try:
+            db.session.commit()
+            logging.info(f"音频更新成功。音频ID：{audio.audio_id}")
+            return Response.success()
+        except Exception as e:
+            logging.error(f"更新音频记录失败。音频ID：{audio.audio_id}, 错误：{str(e)}")
+            db.session.rollback()
+            return Response.error('更新音频记录失败')
+
+    @staticmethod
     def query_audios(username, name, tags):
         query = Audio.query
         query = query.filter(Audio.username == username)
+        # 保存代码，如果要求点击确认按钮后才显示最近文件，则放开此行代码
+        # query = query.filter(Audio.confirmed == 1)
         if name:
             query = query.filter(Audio.name.like(f'%{name}%'))
         if tags and len(tags) > 0:

@@ -21,6 +21,11 @@ class AudioController(Resource):
         audio_id = request.args.get('audio_id')
         return AudioService.delete_by_audio_id(g.username, audio_id)
 
+    @login_required
+    def post(self):
+        data = request.json
+        return AudioService.save_audio(g.username, data)
+
 
 '''
 条件查询音频列表
