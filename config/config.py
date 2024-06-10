@@ -11,7 +11,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # 文件保存目录
-    STORE_FOLDER = os.path.join(os.getcwd(), 'files')
+    STORE_FOLDER = os.path.join('.', 'files')
     SERVER_URL = os.getenv('SERVER_URL')
     # 支付宝支付
     GATEWAY_URL = os.getenv('GATEWAY_URL')
