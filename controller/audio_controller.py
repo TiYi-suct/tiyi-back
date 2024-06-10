@@ -60,7 +60,7 @@ class AudioLabeling(Resource):
     @login_required
     def put(self):
         data = request.json
-        if not data or not data.get('audio_id') or not data.get('tags'):
+        if data is None or data.get('audio_id') is None or data.get('tags') is None:
             return Response.error('参数错误')
         audio_id = data['audio_id']
         tags = data['tags']
