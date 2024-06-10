@@ -4,8 +4,13 @@ import librosa
 import matplotlib
 import numpy as np
 from matplotlib import pyplot as plt
+import soundfile as sf
 
 from config.config import Config
+
+"""
+分析任务需要提交到单独的进程中进行，提交到进程池的任务不能被装饰器修饰，因此单独分离此模块
+"""
 
 # 使用Agg后端，在无GUI的服务器上使用
 matplotlib.use('Agg')
@@ -52,6 +57,15 @@ def bpm_task(path, start_time, end_time):
     return tempo.item()
 
 
+# 移调
+def transposition_task(path, start_time, end_time, n_steps):
+    y, sr = get_audio_segment(path, start_time, end_time)
+    # 移调后的音频
+    y_shifted = librosa.effects.pitch_shift(y=y, sr=sr, n_steps=n_steps)
+    # 将音频保存到本地，返回url
+    return save_analysis_audio(y_shifted, sr, get_ext(path))
+
+
 # 截取音频片段，以秒为单位
 def get_audio_segment(path, start_time, end_time):
     # 加载音频文件，
@@ -76,11 +90,25 @@ def get_audio_segment(path, start_time, end_time):
 
 
 # 保存图片，返回远程访问地址
-def save_analysis_img():
-    filename = uuid.uuid4().hex + '.png'
+def save_analysis_img(ext='png'):
+    filename = uuid.uuid4().hex + '.' + ext
     image_path = f'{Config.STORE_FOLDER}/{filename}'
-    plt.savefig(image_path, format='png')
+    plt.savefig(image_path, format=ext)
     plt.close()
+    url = f'{Config.SERVER_URL}/file/{filename}'
+    return url
+
+
+# 获取文件格式
+def get_ext(path):
+    return path.split('.')[-1]
+
+
+# 保存音频，返回远程访问地址
+def save_analysis_audio(y, sr, ext):
+    filename = uuid.uuid4().hex + '.' + ext
+    audio_path = f'{Config.STORE_FOLDER}/{filename}'
+    sf.write(audio_path, y, sr, format=ext)
     url = f'{Config.SERVER_URL}/file/{filename}'
     return url
 

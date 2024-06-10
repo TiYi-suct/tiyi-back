@@ -9,7 +9,7 @@ from functools import wraps
 from flask import g
 
 from model.models import User, AnalysisItem, db, Audio
-from service.analysis_tasks import mel_spectrogram_task, spectrogram_task, bpm_task
+from service.analysis_tasks import mel_spectrogram_task, spectrogram_task, bpm_task, transposition_task
 from utils.response import Response
 
 # 全局进程池，处理绘图多线程安全问题
@@ -122,6 +122,12 @@ def spectrogram(audio_id, start_time, end_time):
 def bpm(audio_id, start_time, end_time):
     path = get_audio_path(audio_id)
     return Response.success(executor.submit(bpm_task, path, start_time, end_time).result())
+
+
+@analysis_process('移调')
+def transposition(audio_id, start_time, end_time, n_steps):
+    path = get_audio_path(audio_id)
+    return Response.success(executor.submit(transposition_task, path, start_time, end_time, n_steps).result())
 
 
 # 音频不存在
