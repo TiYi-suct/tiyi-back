@@ -1,4 +1,4 @@
-# 命令执行 docker-compose -f docker-compose-environment.yml up -d
+# 命令执行 docker-compose -f compose.yml up -d
 version: '3.9'
 services:
   mysql:
@@ -50,6 +50,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  # tiyi-app
+  tiyi-app:
+    build: .
+    networks:
+      - tiyi-network
+    ports:
+      - "80:5000"
 
 networks:
   tiyi-network:
