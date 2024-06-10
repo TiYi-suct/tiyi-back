@@ -71,11 +71,11 @@ CREATE TABLE `audio`  (
 -- ----------------------------
 -- Records of audio
 -- ----------------------------
-INSERT INTO `audio` VALUES (5, '10e0e16c66d74b5d802db3c30aa41730', 'sample-15s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41730.wav', 'http://127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41730.wav', '流行,轻松', NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
-INSERT INTO `audio` VALUES (6, 'a94613d074ce41e487d0897a2f23918d', '卡农', 'flac', './files/a94613d074ce41e487d0897a2f23918d.flac', 'http://127.0.0.1:5000/file/a94613d074ce41e487d0897a2f23918d.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
-INSERT INTO `audio` VALUES (7, '58368ded826e4a0490bda7030a230200', '朴树-平凡之路', 'flac', './files/58368ded826e4a0490bda7030a230200.flac', 'http://127.0.0.1:5000/file/58368ded826e4a0490bda7030a230200.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
-INSERT INTO `audio` VALUES (8, '2ef625823646459791f10f53c7218ed6', '陈慧琳-阁楼', 'mp3', './files/2ef625823646459791f10f53c7218ed6.mp3', 'http://127.0.0.1:5000/file/2ef625823646459791f10f53c7218ed6.mp3', NULL, NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
-INSERT INTO `audio` VALUES (9, '1d97e4eb015449319df0b7240ca08d46', '周杰伦-稻香', 'mp3', './files/1d97e4eb015449319df0b7240ca08d46.mp3', 'http://127.0.0.1:5000/file/1d97e4eb015449319df0b7240ca08d46.mp3', '流行,治愈', NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (5, '10e0e16c66d74b5d802db3c30aa41730', 'sample-15s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41730.wav', 'http://tiyi.api.maskira.top/file/10e0e16c66d74b5d802db3c30aa41730.wav', '流行,轻松', NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
+INSERT INTO `audio` VALUES (6, 'a94613d074ce41e487d0897a2f23918d', '卡农', 'flac', './files/a94613d074ce41e487d0897a2f23918d.flac', 'http://tiyi.api.maskira.top/file/a94613d074ce41e487d0897a2f23918d.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
+INSERT INTO `audio` VALUES (7, '58368ded826e4a0490bda7030a230200', '朴树-平凡之路', 'flac', './files/58368ded826e4a0490bda7030a230200.flac', 'http://tiyi.api.maskira.top/file/58368ded826e4a0490bda7030a230200.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (8, '2ef625823646459791f10f53c7218ed6', '陈慧琳-阁楼', 'mp3', './files/2ef625823646459791f10f53c7218ed6.mp3', 'http://tiyi.api.maskira.top/file/2ef625823646459791f10f53c7218ed6.mp3', NULL, NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (9, '1d97e4eb015449319df0b7240ca08d46', '周杰伦-稻香', 'mp3', './files/1d97e4eb015449319df0b7240ca08d46.mp3', 'http://tiyi.api.maskira.top/file/1d97e4eb015449319df0b7240ca08d46.mp3', '流行,治愈', NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
 
 -- ----------------------------
 -- Table structure for audio_tags
