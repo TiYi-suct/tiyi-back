@@ -91,7 +91,8 @@ services:
 
   # tiyi-app
   tiyi-app:
-    build: .
+    image: tiyi-app:1.0
+    container_name: tiyi-app
     networks:
       - tiyi-network
     ports:
