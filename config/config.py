@@ -1,8 +1,13 @@
 import os
 
+from dotenv import load_dotenv
+
 """
 项目配置类
 """
+
+# 加载环境变量
+load_dotenv()
 
 
 class Config:
@@ -21,4 +26,4 @@ class Config:
     CHARSET = os.getenv('CHARSET')
     FORMAT = os.getenv('FORMAT')
     SIGN_TYPE = os.getenv('SIGN_TYPE')
-    NOTIFY_URL= SERVER_URL + os.getenv('NOTIFY_URL')
+    NOTIFY_URL = SERVER_URL + os.getenv('NOTIFY_URL')

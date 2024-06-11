@@ -1,13 +1,14 @@
 import os.path
 
 from flask import Flask
+from waitress import serve
 
 from config.config import Config
 from config.routes import config_routes
 from model.models import db
 
+# 创建flask实例
 app = Flask(__name__)
-
 # 加载配置
 app.config.from_object(Config())
 # 初始化数据库连接
@@ -19,4 +20,4 @@ if not os.path.exists(Config.STORE_FOLDER):
     os.makedirs(Config.STORE_FOLDER)
 
 if __name__ == '__main__':
-    app.run()
+    serve(app, host='0.0.0.0', port=5000)
