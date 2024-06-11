@@ -6,6 +6,7 @@ import logging
 from flask_bcrypt import Bcrypt
 
 from model.models import User, db
+from service.file_service import FileService
 from utils.jwt_util import get_jwt_token
 from utils.response import Response
 
@@ -19,6 +20,29 @@ class UserService:
         if not user:
             return Response.error('用户不存在')
         return Response.success(user.to_dict())
+
+    @staticmethod
+    def update_avatar(username, avatar):
+        user = User.query.filter(User.username == username).one_or_none()
+        if not user:
+            return Response.error('用户不存在')
+        response, code = FileService.upload(avatar)
+        if code == 200:
+            url = response.get('data')
+            user.avatar = url
+            db.session.commit()
+            return Response.success(url)
+        else:
+            return Response.error('更换头像失败')
+
+    @staticmethod
+    def edit_signature(username, signature):
+        user = User.query.filter(User.username == username).one_or_none()
+        if not user:
+            return Response.error('用户不存在')
+        user.signature = signature
+        db.session.commit()
+        return Response.success()
 
     @staticmethod
     def register(data):
@@ -58,5 +82,5 @@ class UserService:
         if not bcrypt.check_password_hash(user.password, password):
             return Response.error('密码错误')
         # 生成jwt返回给用户
-        token = get_jwt_token(username, 3600)
+        token = get_jwt_token(username, 360000)
         return Response.success(token)
