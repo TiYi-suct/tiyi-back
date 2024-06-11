@@ -39,11 +39,11 @@ CREATE TABLE `analysis_item`  (
 -- ----------------------------
 -- Records of analysis_item
 -- ----------------------------
-INSERT INTO `analysis_item` VALUES (1, 'BPM', 'BPM代表每分钟的节拍数，是衡量音乐速度的标准单位。它描述了音乐的速度，通常用于定义一首曲子的节奏快慢。例如，舞曲的BPM通常较高，在120-150之间，而慢节奏的抒情歌曲可能在60-80之间。', 0, '2024-06-08 14:43:56', '2024-06-08 14:43:56');
-INSERT INTO `analysis_item` VALUES (2, '移调', '移调是指将一段音乐整体上升或下降几个音调，以便于演奏或演唱。它可以改变乐曲的调性而不改变音符之间的相对关系。例如，将C调的曲子移调到D调，会使每个音符都上升一个全音。', 5, '2024-06-08 14:44:22', '2024-06-08 14:44:22');
-INSERT INTO `analysis_item` VALUES (3, '梅尔频谱图', '梅尔频谱图是音频信号的时频表示，其中频率轴经过梅尔标度变换，反映人耳的听觉感知。它广泛应用于语音识别、音乐信息检索等领域。一段音频的梅尔频谱图可以展示其频率内容随时间变化的情况，帮助分析音频特征。', 3, '2024-06-08 22:37:08', '2024-06-08 22:37:08');
-INSERT INTO `analysis_item` VALUES (4, '频谱图', '频谱图是显示音频信号强度（功率）随频率和时间变化的图像，是分析音频信号频率成分的主要工具。频谱图可以展示音乐或语音的频率成分以及这些成分如何随时间变化，是音频信号处理中的常用工具。', 5, '2024-06-09 17:55:16', '2024-06-09 17:55:16');
-INSERT INTO `analysis_item` VALUES (5, 'MFCC', 'MFCC是从音频信号中提取的一组特征，表示音频信号的短期功率谱包络。它将音频信号转换为梅尔频率刻度后，通过离散余弦变换得到的系数。广泛用于语音识别和音频分类，是机器学习和信号处理中的重要特征。', 10, '2024-06-10 10:50:43', '2024-06-10 10:50:43');
+INSERT INTO `analysis_item` VALUES (1, 'BPM', 'Beat Per Minute 是衡量音乐速度的标准单位。', 0, '2024-06-08 14:43:56', '2024-06-08 14:43:56');
+INSERT INTO `analysis_item` VALUES (2, '移调', '将一段音乐整体上升或下降几个音调，以便于演奏或演唱。', 5, '2024-06-08 14:44:22', '2024-06-08 14:44:22');
+INSERT INTO `analysis_item` VALUES (3, '梅尔频谱图', '音频信号的时频表示，频率轴经过梅尔标度变换，反映人耳的听觉感知。', 3, '2024-06-08 22:37:08', '2024-06-08 22:37:08');
+INSERT INTO `analysis_item` VALUES (4, '频谱图', '显示音频信号强度（功率）随频率和时间变化的图像。', 5, '2024-06-09 17:55:16', '2024-06-09 17:55:16');
+INSERT INTO `analysis_item` VALUES (5, 'MFCC', 'Mel-Frequency Cepstral Coefficients 表示音频信号的短期功率谱包络。', 10, '2024-06-10 10:50:43', '2024-06-10 10:50:43');
 
 -- ----------------------------
 -- Table structure for audio
@@ -71,11 +71,20 @@ CREATE TABLE `audio`  (
 -- ----------------------------
 -- Records of audio
 -- ----------------------------
-INSERT INTO `audio` VALUES (5, '10e0e16c66d74b5d802db3c30aa41730', 'sample-15s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41730.wav', 'http://127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41730.wav', '流行,轻松', NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
-INSERT INTO `audio` VALUES (6, 'a94613d074ce41e487d0897a2f23918d', '卡农', 'flac', './files/a94613d074ce41e487d0897a2f23918d.flac', 'http://127.0.0.1:5000/file/a94613d074ce41e487d0897a2f23918d.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
-INSERT INTO `audio` VALUES (7, '58368ded826e4a0490bda7030a230200', '朴树-平凡之路', 'flac', './files/58368ded826e4a0490bda7030a230200.flac', 'http://127.0.0.1:5000/file/58368ded826e4a0490bda7030a230200.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
-INSERT INTO `audio` VALUES (8, '2ef625823646459791f10f53c7218ed6', '陈慧琳-阁楼', 'mp3', './files/2ef625823646459791f10f53c7218ed6.mp3', 'http://127.0.0.1:5000/file/2ef625823646459791f10f53c7218ed6.mp3', NULL, NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
-INSERT INTO `audio` VALUES (9, '1d97e4eb015449319df0b7240ca08d46', '周杰伦-稻香', 'mp3', './files/1d97e4eb015449319df0b7240ca08d46.mp3', 'http://127.0.0.1:5000/file/1d97e4eb015449319df0b7240ca08d46.mp3', '流行,治愈', NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (1, '10e0e16c66d74b5d802db3c30aa41730', 'sample-15s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41730.wav', 'http:127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41730.wav', '流行,轻松', NULL, NULL, 'mask', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
+INSERT INTO `audio` VALUES (2, 'a94613d074ce41e487d0897a2f23918d', '卡农', 'flac', './files/a94613d074ce41e487d0897a2f23918d.flac', 'http:127.0.0.1:5000/file/a94613d074ce41e487d0897a2f23918d.flac', NULL, NULL, NULL, 'maskira', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
+INSERT INTO `audio` VALUES (3, '58368ded826e4a0490bda7030a230200', '朴树-平凡之路', 'flac', './files/58368ded826e4a0490bda7030a230200.flac', 'http:127.0.0.1:5000/file/58368ded826e4a0490bda7030a230200.flac', NULL, NULL, NULL, 'mask', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (4, '2ef625823646459791f10f53c7218ed6', '陈慧琳-阁楼', 'mp3', './files/2ef625823646459791f10f53c7218ed6.mp3', 'http:127.0.0.1:5000/file/2ef625823646459791f10f53c7218ed6.mp3', NULL, NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (5, '1d97e4eb015449319df0b7240ca08d46', '周杰伦-稻香', 'mp3', './files/1d97e4eb015449319df0b7240ca08d46.mp3', 'http:127.0.0.1:5000/file/1d97e4eb015449319df0b7240ca08d46.mp3', '流行,治愈', NULL, NULL, 'maskira', 0, '2024-06-10 16:56:14', '2024-06-10 16:56:14');
+INSERT INTO `audio` VALUES (6, '10e0e16c66d74b5d802db3c30aa41731', 'sample-1s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41731.wav', 'http:127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41731.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:03', '2024-06-10 16:42:03');
+INSERT INTO `audio` VALUES (7, '10e0e16c66d74b5d802db3c30aa41732', 'sample-2s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41732.wav', 'http:127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41732.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:04', '2024-06-10 16:42:04');
+INSERT INTO `audio` VALUES (8, '10e0e16c66d74b5d802db3c30aa41733', 'sample-3s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41733.wav', 'http:127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41733.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:05', '2024-06-10 16:42:05');
+INSERT INTO `audio` VALUES (9, '10e0e16c66d74b5d802db3c30aa41734', 'sample-4s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41734.wav', 'http:127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41734.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:06', '2024-06-10 16:42:06');
+INSERT INTO `audio` VALUES (10, '10e0e16c66d74b5d802db3c30aa41735', 'sample-5s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41735.wav', 'http://127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41735.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:07', '2024-06-10 16:42:07');
+INSERT INTO `audio` VALUES (11, '10e0e16c66d74b5d802db3c30aa41736', 'sample-6s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41736.wav', 'http://127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41736.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:08', '2024-06-10 16:42:08');
+INSERT INTO `audio` VALUES (12, '10e0e16c66d74b5d802db3c30aa41737', 'sample-7s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41737.wav', 'http://127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41737.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:09', '2024-06-10 16:42:09');
+INSERT INTO `audio` VALUES (13, '10e0e16c66d74b5d802db3c30aa41738', 'sample-8s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41738.wav', 'http://127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41738.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:10', '2024-06-10 16:42:10');
+INSERT INTO `audio` VALUES (14, '10e0e16c66d74b5d802db3c30aa41739', 'sample-9s', 'wav', './files/10e0e16c66d74b5d802db3c30aa41739.wav', 'http://127.0.0.1:5000/file/10e0e16c66d74b5d802db3c30aa41739.wav', '流行,轻松', NULL, NULL, 'maskira', 0, '2024-06-10 16:42:11', '2024-06-10 16:42:11');
 
 -- ----------------------------
 -- Table structure for audio_tags
