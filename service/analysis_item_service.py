@@ -14,12 +14,16 @@ class AnalysisItemService:
 
     @staticmethod
     def calculate_coins_consumption(username, item_names):
-        if not item_names or len(item_names) == 0:
-            return Response.error('请选择音频分析项目')
         # 当前登录用户
         user = User.query.filter(User.username == username).one_or_none()
         if not user:
             return Response.error('用户不存在')
+        if not item_names or len(item_names) == 0:
+            return Response.success({
+                'allow': True,
+                'required': 0,
+                'user_coins': user.music_coin
+            })
         # 查询音频分析项目，名称在item_names中，逗号分隔
         item_name_list = item_names.split(',')
         analysis_items = AnalysisItem.query.filter(AnalysisItem.name.in_(item_name_list)).all()
