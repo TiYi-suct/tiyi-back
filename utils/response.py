@@ -19,3 +19,7 @@ class Response:
     @staticmethod
     def error(msg: str):
         return {'code': 1, 'msg': msg, 'data': ''}, 400
+
+    @staticmethod
+    def not_exist():
+        return {'code': 1, 'msg': '路径不存在', 'data': ''}, 404

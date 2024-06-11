@@ -7,7 +7,7 @@ from controller.audio_tags_controller import AudioTagsController
 from controller.file_controller import FileController
 from controller.pay_controller import GetOrderInfo, PayResultNotify
 from controller.recharge_item_controller import RechargeItemController
-from controller.user_controller import UserRegister, UserLogin, UserController
+from controller.user_controller import UserController
 
 
 def config_routes(app):
@@ -17,9 +17,7 @@ def config_routes(app):
     # api.add_resource(HelloController, '/hello')
 
     # 用户相关资源
-    api.add_resource(UserController, '/user')
-    api.add_resource(UserRegister, '/user/register')
-    api.add_resource(UserLogin, '/user/login')
+    api.add_resource(UserController, '/user', '/user/<string:action>')
 
     # 音频相关资源
     api.add_resource(AudioController, '/audio')
