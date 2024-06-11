@@ -74,7 +74,7 @@ class AudioService:
             tags_list = tags.split(',')
             tag_filters = [Audio.tags.like(f"%{tag}%") for tag in tags_list]
             query = query.filter(or_(*tag_filters))
-        audios = query.order_by(Audio.update_time.desc()).all()
+        audios = query.order_by(Audio.create_time.desc()).all()
         if not audios:
             return Response.success([])
         result = []
