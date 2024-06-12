@@ -43,9 +43,12 @@ class AudioService:
             logging.error(f'非法操作：音频不属于用户。用户：{username}，音频：{audio.to_dict()}')
             return Response.error(f'非法操作，禁止操作不属于自己的音频')
         # 更新数据库记录
+        name = data.get('name')
         tags = data.get('tags')
         cover = data.get('cover')
         description = data.get('description')
+        if not name:
+            audio.name = name
         if tags is not None:
             audio.tags = tags
         if cover is not None:

@@ -4,6 +4,7 @@
 import inspect
 import logging
 from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures.process import BrokenProcessPool
 from functools import wraps
 
 from flask import g
@@ -12,8 +13,32 @@ from model.models import User, AnalysisItem, db, Audio
 from service.analysis_tasks import mel_spectrogram_task, spectrogram_task, bpm_task, transposition_task, mfcc_task
 from utils.response import Response
 
+"""
+自定义进程池
+"""
+
+
+class ResilientProcessPoolExecutor(ProcessPoolExecutor):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._broken = False
+
+    def submit(self, fn, *args, **kwargs):
+        if self._broken:
+            raise BrokenProcessPool("Process pool is broken")
+        try:
+            return super().submit(fn, *args, **kwargs)
+        except BrokenProcessPool:
+            self._broken = True
+            raise
+
+
+def initialize_pool():
+    return ResilientProcessPoolExecutor(max_workers=4)
+
+
 # 全局进程池，处理绘图多线程安全问题
-executor = ProcessPoolExecutor(max_workers=4)
+executor = initialize_pool()
 
 """
 音频分析流程装饰器：
@@ -27,6 +52,7 @@ def analysis_process(analysis_item_name):
     def decorator(f):
         @wraps(f)
         def decorated(*args, **kwargs):
+            global executor
             # 检查必要的参数
             func_args = inspect.signature(f).bind(*args, **kwargs).arguments
             audio_id = func_args.get('audio_id')
@@ -52,6 +78,10 @@ def analysis_process(analysis_item_name):
                 result = f(*args, **kwargs)
                 # todo 返回结果之前先缓存记录
                 return result
+            except BrokenProcessPool:
+                logging.warning("Process pool is broken. Reinitializing.")
+                executor = initialize_pool()  # Reinitialize the global executor
+                return Response.error('分析进程池异常，已重启，请稍后重试')
             except Exception as e:
                 logging.error(f'{analysis_item_name}分析出现异常：{audio_id}, 错误信息：{e}')
                 # 返还用户音乐币
@@ -115,7 +145,8 @@ def mel_spectrogram(audio_id, start_time, end_time):
 @analysis_process('频谱图')
 def spectrogram(audio_id, start_time, end_time):
     path = get_audio_path(audio_id)
-    return Response.success(executor.submit(spectrogram_task, path, start_time, end_time).result())
+    future = executor.submit(spectrogram_task, path, start_time, end_time)
+    return Response.success(future.result())
 
 
 @analysis_process('BPM')
