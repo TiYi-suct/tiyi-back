@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 import librosa
@@ -18,69 +19,89 @@ matplotlib.use('Agg')
 
 # 梅尔频谱图
 def mel_spectrogram_task(path, start_time, end_time):
-    y, sr = get_audio_segment(path, start_time, end_time)
-    # 计算梅尔频谱图
-    mel = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)  # type: ignore
-    # 转换为分贝
-    S_db = librosa.power_to_db(mel, ref=np.max)
-    # 绘制梅尔频谱图
-    plt.figure(figsize=(calc_fig_width(y, sr), 6))
-    librosa.display.specshow(S_db, sr=sr, x_axis='time', y_axis='mel')
-    plt.colorbar(format='%+2.0f dB')
-    plt.title('Mel Spectrogram')
-    plt.tight_layout()
-    # 将图像保存到本地
-    return save_analysis_img()
+    try:
+        y, sr = get_audio_segment(path, start_time, end_time)
+        # 计算梅尔频谱图
+        mel = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)  # type: ignore
+        # 转换为分贝
+        S_db = librosa.power_to_db(mel, ref=np.max)
+        # 绘制梅尔频谱图
+        plt.figure(figsize=(calc_fig_width(y, sr), 6))
+        librosa.display.specshow(S_db, sr=sr, x_axis='time', y_axis='mel')
+        plt.colorbar(format='%+2.0f dB')
+        plt.title('Mel Spectrogram')
+        plt.tight_layout()
+        # 将图像保存到本地
+        return save_analysis_img()
+    except Exception as e:
+        logging.error('梅尔频谱图：', e)
+        raise e
 
 
 # 频谱图
 def spectrogram_task(path, start_time, end_time):
-    y, sr = get_audio_segment(path, start_time, end_time)
-    # 计算短时傅里叶变换（STFT）
-    D = librosa.stft(y)
-    S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
-    # 绘制频谱图
-    plt.figure(figsize=(calc_fig_width(y, sr), 6))
-    librosa.display.specshow(S_db, x_axis='time', y_axis='log')
-    plt.colorbar(format='%+2.0f dB')
-    plt.title('Spectrogram')
-    plt.tight_layout()
-    return save_analysis_img()
+    try:
+        y, sr = get_audio_segment(path, start_time, end_time)
+        # 计算短时傅里叶变换（STFT）
+        D = librosa.stft(y)
+        S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+        # 绘制频谱图
+        plt.figure(figsize=(calc_fig_width(y, sr), 6))
+        librosa.display.specshow(S_db, x_axis='time', y_axis='log')
+        plt.colorbar(format='%+2.0f dB')
+        plt.title('Spectrogram')
+        plt.tight_layout()
+        return save_analysis_img()
+    except Exception as e:
+        logging.error('频谱图：', e)
+        raise e
 
 
 # BPM
 def bpm_task(path, start_time, end_time):
-    y, sr = get_audio_segment(path, start_time, end_time)
-    # 监测节拍
-    tempo, beats = librosa.beat.beat_track(y=y, sr=sr)
-    # BPM只有一个数
-    return tempo.item()
+    try:
+        y, sr = get_audio_segment(path, start_time, end_time)
+        # 监测节拍
+        tempo, beats = librosa.beat.beat_track(y=y, sr=sr)
+        # BPM只有一个数
+        return tempo.item()
+    except Exception as e:
+        logging.error('BPM：', e)
+        raise e
 
 
 # 移调
 def transposition_task(path, start_time, end_time, n_steps):
-    y, sr = get_audio_segment(path, start_time, end_time)
-    # 移调后的音频
-    y_shifted = librosa.effects.pitch_shift(y=y, sr=sr, n_steps=n_steps)
-    # 将音频保存到本地，返回url
-    return save_analysis_audio(y_shifted, sr, get_ext(path))
+    try:
+        y, sr = get_audio_segment(path, start_time, end_time)
+        # 移调后的音频
+        y_shifted = librosa.effects.pitch_shift(y=y, sr=sr, n_steps=n_steps)
+        # 将音频保存到本地，返回url
+        return save_analysis_audio(y_shifted, sr, get_ext(path))
+    except Exception as e:
+        logging.error('移调：', e)
+        raise e
 
 
 # MFCC
 def mfcc_task(path, start_time, end_time, n_mfcc=20):
-    y, sr = get_audio_segment(path, start_time, end_time)
-    # 计算MFCC
-    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)  # type: ignore
-    # 绘图
-    plt.figure(figsize=(calc_fig_width(y, sr), 2 * n_mfcc))
-    for i in range(n_mfcc):
-        plt.subplot(n_mfcc, 1, i + 1)
-        plt.plot(mfccs[i])
-        plt.title(f'MFCC Coefficient {i + 1}')
-        plt.xlabel('Time Frame')
-        plt.ylabel('Amplitude')
-    plt.tight_layout()
-    return save_analysis_img()
+    try:
+        y, sr = get_audio_segment(path, start_time, end_time)
+        # 计算MFCC
+        mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)  # type: ignore
+        # 绘图
+        plt.figure(figsize=(calc_fig_width(y, sr), 2 * n_mfcc))
+        for i in range(n_mfcc):
+            plt.subplot(n_mfcc, 1, i + 1)
+            plt.plot(mfccs[i])
+            plt.title(f'MFCC Coefficient {i + 1}')
+            plt.xlabel('Time Frame')
+            plt.ylabel('Amplitude')
+        plt.tight_layout()
+        return save_analysis_img()
+    except Exception as e:
+        logging.error('MFCC：', e)
+        raise e
 
 
 # 截取音频片段，以秒为单位
@@ -131,7 +152,7 @@ def save_analysis_audio(y, sr, ext):
 
 
 # 每秒对应的图形宽度
-width_per_second = 0.5
+width_per_second = 0.3
 
 
 # 计算图片的宽度：与音频的长度有关
