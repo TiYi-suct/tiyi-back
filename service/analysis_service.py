@@ -42,6 +42,14 @@ lock = threading.Lock()
 # 全局进程池，处理绘图多线程安全问题
 executor = ResilientProcessPoolExecutor()
 
+# 分析结果缓存
+cache = {}
+
+
+# 根据函数签名计算key
+def cache_key(f, *args, **kwargs):
+    return f.__name__ + str(args) + str(kwargs)
+
 
 def restart_pool():
     global executor
@@ -81,12 +89,18 @@ def analysis_process(analysis_item_name):
             if not is_deducted:
                 return Response.error('音乐币不足')
 
-            # todo 优先从本地获取结果
+            # 优先从本地获取结果
+            key = cache_key(f, *args, **kwargs)
+            if key in cache:
+                result = cache[key]
+                logging.debug(f'命中缓存：{key}，{result}')
+                return result
 
             try:
                 # 在单独的进程中进行音频分析
                 result = f(*args, **kwargs)
-                # todo 返回结果之前先缓存记录
+                # 返回结果之前先缓存记录
+                cache[key] = result
                 return result
             except BrokenProcessPool:
                 logging.warning("Process pool is broken. Reinitializing.")
