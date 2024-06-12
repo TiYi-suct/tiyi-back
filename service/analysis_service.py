@@ -2,6 +2,7 @@
 音频分析服务
 """
 import inspect
+import json
 import logging
 import threading
 from concurrent.futures import ProcessPoolExecutor
@@ -10,6 +11,7 @@ from functools import wraps
 
 from flask import g
 
+from config.redis_config import redis_client
 from model.models import User, AnalysisItem, db, Audio
 from service.analysis_tasks import mel_spectrogram_task, spectrogram_task, bpm_task, transposition_task, mfcc_task
 from utils.response import Response
@@ -41,9 +43,6 @@ lock = threading.Lock()
 
 # 全局进程池，处理绘图多线程安全问题
 executor = ResilientProcessPoolExecutor()
-
-# 分析结果缓存
-cache = {}
 
 
 # 根据函数签名计算key
@@ -91,17 +90,19 @@ def analysis_process(analysis_item_name):
 
             # 优先从本地获取结果
             key = cache_key(f, *args, **kwargs)
-            if key in cache:
-                result = cache[key]
-                logging.debug(f'命中缓存：{key}，{result}')
-                return result
+            cache_result = redis_client.get(key)
+            if cache_result:
+                cache_result = json.loads(cache_result)
+                logging.info(f'命中缓存：key:{key},value:{cache_result}')
+                return cache_result, 200
 
             try:
                 # 在单独的进程中进行音频分析
-                result = f(*args, **kwargs)
+                result, code = f(*args, **kwargs)
                 # 返回结果之前先缓存记录
-                cache[key] = result
-                return result
+                logging.info(f'缓存到redis：key：{key},value:{result}')
+                redis_client.set(key, json.dumps(result))
+                return result, code
             except BrokenProcessPool:
                 logging.warning("Process pool is broken. Reinitializing.")
                 restart_pool()  # Reinitialize the global executor
