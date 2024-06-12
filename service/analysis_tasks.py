@@ -36,6 +36,8 @@ def mel_spectrogram_task(path, start_time, end_time):
     except Exception as e:
         logging.error('梅尔频谱图：', e)
         raise e
+    finally:
+        plt.close()
 
 
 # 频谱图
@@ -55,6 +57,8 @@ def spectrogram_task(path, start_time, end_time):
     except Exception as e:
         logging.error('频谱图：', e)
         raise e
+    finally:
+        plt.close()
 
 
 # BPM
@@ -102,6 +106,8 @@ def mfcc_task(path, start_time, end_time, n_mfcc=20):
     except Exception as e:
         logging.error('MFCC：', e)
         raise e
+    finally:
+        plt.close()
 
 
 # 截取音频片段，以秒为单位
