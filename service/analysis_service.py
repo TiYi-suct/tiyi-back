@@ -53,11 +53,11 @@ def analysis_process(analysis_item_name):
                 # todo 返回结果之前先缓存记录
                 return result
             except Exception as e:
-                logging.error(f'{analysis_item_name} 分析出现异常：{audio_id}, 错误信息：{e}')
+                logging.error(f'{analysis_item_name}分析出现异常：{audio_id}, 错误信息：{e}')
                 # 返还用户音乐币
                 if not return_music_coin(username, analysis_item_name):
                     return Response.error(f'{analysis_item_name}：音乐币返还异常，请联系工作人员')
-                return Response.error(f'{analysis_item_name} 分析出现异常')
+                return Response.error(f'{analysis_item_name}分析出现异常：{e}')
 
         return decorated
 
