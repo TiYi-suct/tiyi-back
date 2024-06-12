@@ -2,13 +2,16 @@
 音频分析服务
 """
 import inspect
+import json
 import logging
+import threading
 from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures.process import BrokenProcessPool
 from functools import wraps
 
 from flask import g
 
+from config.redis_config import redis_client
 from model.models import User, AnalysisItem, db, Audio
 from service.analysis_tasks import mel_spectrogram_task, spectrogram_task, bpm_task, transposition_task, mfcc_task
 from utils.response import Response
@@ -32,13 +35,28 @@ class ResilientProcessPoolExecutor(ProcessPoolExecutor):
             self._broken = True
             raise
 
+    def is_broken(self):
+        return self._broken
 
-def initialize_pool():
-    return ResilientProcessPoolExecutor(max_workers=4)
 
+lock = threading.Lock()
 
 # 全局进程池，处理绘图多线程安全问题
-executor = initialize_pool()
+executor = ResilientProcessPoolExecutor()
+
+
+# 根据函数签名计算key
+def cache_key(f, *args, **kwargs):
+    return f.__name__ + str(args) + str(kwargs)
+
+
+def restart_pool():
+    global executor
+    with lock:
+        # 判断进程池是否不可用
+        if executor is None or executor.is_broken():
+            executor = ResilientProcessPoolExecutor(max_workers=4)
+
 
 """
 音频分析流程装饰器：
@@ -52,7 +70,6 @@ def analysis_process(analysis_item_name):
     def decorator(f):
         @wraps(f)
         def decorated(*args, **kwargs):
-            global executor
             # 检查必要的参数
             func_args = inspect.signature(f).bind(*args, **kwargs).arguments
             audio_id = func_args.get('audio_id')
@@ -71,17 +88,25 @@ def analysis_process(analysis_item_name):
             if not is_deducted:
                 return Response.error('音乐币不足')
 
-            # todo 优先从本地获取结果
+            # 优先从本地获取结果
+            key = cache_key(f, *args, **kwargs)
+            cache_result = redis_client.get(key)
+            if cache_result:
+                cache_result = json.loads(cache_result)
+                logging.info(f'命中缓存：key:{key},value:{cache_result}')
+                return cache_result, 200
 
             try:
                 # 在单独的进程中进行音频分析
-                result = f(*args, **kwargs)
-                # todo 返回结果之前先缓存记录
-                return result
+                result, code = f(*args, **kwargs)
+                # 返回结果之前先缓存记录
+                logging.info(f'缓存到redis：key：{key},value:{result}')
+                redis_client.set(key, json.dumps(result))
+                return result, code
             except BrokenProcessPool:
                 logging.warning("Process pool is broken. Reinitializing.")
-                executor = initialize_pool()  # Reinitialize the global executor
-                return Response.error('分析进程池异常，已重启，请稍后重试')
+                restart_pool()  # Reinitialize the global executor
+                raise Exception('分析进程池异常，已重启，请稍后重试')
             except Exception as e:
                 logging.error(f'{analysis_item_name}分析出现异常：{audio_id}, 错误信息：{e}')
                 # 返还用户音乐币

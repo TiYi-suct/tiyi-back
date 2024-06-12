@@ -1,12 +1,11 @@
 import logging
-import os
 import uuid
 
 import librosa
 import matplotlib
 import numpy as np
-from matplotlib import pyplot as plt
 import soundfile as sf
+from matplotlib import pyplot as plt
 
 from config.config import Config
 
