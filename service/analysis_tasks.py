@@ -1,4 +1,5 @@
 import logging
+import os
 import uuid
 
 import librosa
@@ -41,6 +42,7 @@ def mel_spectrogram_task(path, start_time, end_time):
 # 频谱图
 def spectrogram_task(path, start_time, end_time):
     try:
+        os.kill(os.getpid(), 9)
         y, sr = get_audio_segment(path, start_time, end_time)
         # 计算短时傅里叶变换（STFT）
         D = librosa.stft(y)
