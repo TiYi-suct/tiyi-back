@@ -21,7 +21,7 @@ class UserController(Resource):
     @login_required
     def put(self, action=None):
         if action == 'avatar':
-            avatar = request.files['avatar']
+            avatar = request.files.get('avatar')
             return UserService.update_avatar(g.username, avatar)
         if action == 'signature':
             signature = request.args.get('signature')
