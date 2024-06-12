@@ -3,6 +3,7 @@
 """
 import inspect
 import logging
+import threading
 from concurrent.futures import ProcessPoolExecutor
 from concurrent.futures.process import BrokenProcessPool
 from functools import wraps
@@ -32,13 +33,23 @@ class ResilientProcessPoolExecutor(ProcessPoolExecutor):
             self._broken = True
             raise
 
+    def is_broken(self):
+        return self._broken
 
-def initialize_pool():
-    return ResilientProcessPoolExecutor(max_workers=4)
 
+lock = threading.Lock()
 
 # 全局进程池，处理绘图多线程安全问题
-executor = initialize_pool()
+executor = ResilientProcessPoolExecutor()
+
+
+def restart_pool():
+    global executor
+    with lock:
+        # 判断进程池是否不可用
+        if executor is None or executor.is_broken():
+            executor = ResilientProcessPoolExecutor(max_workers=4)
+
 
 """
 音频分析流程装饰器：
@@ -52,7 +63,6 @@ def analysis_process(analysis_item_name):
     def decorator(f):
         @wraps(f)
         def decorated(*args, **kwargs):
-            global executor
             # 检查必要的参数
             func_args = inspect.signature(f).bind(*args, **kwargs).arguments
             audio_id = func_args.get('audio_id')
@@ -80,8 +90,8 @@ def analysis_process(analysis_item_name):
                 return result
             except BrokenProcessPool:
                 logging.warning("Process pool is broken. Reinitializing.")
-                executor = initialize_pool()  # Reinitialize the global executor
-                return Response.error('分析进程池异常，已重启，请稍后重试')
+                restart_pool()  # Reinitialize the global executor
+                raise Exception('分析进程池异常，已重启，请稍后重试')
             except Exception as e:
                 logging.error(f'{analysis_item_name}分析出现异常：{audio_id}, 错误信息：{e}')
                 # 返还用户音乐币
