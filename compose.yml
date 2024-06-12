@@ -91,7 +91,7 @@ services:
 
   # tiyi-app
   tiyi-app:
-    image: tiyi-app:3.0
+    image: tiyi-app:2.0
     container_name: tiyi-app
     networks:
       - tiyi-network
