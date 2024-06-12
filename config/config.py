@@ -10,6 +10,10 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # Redis
+    REDIS_HOST = os.getenv('REDIS_HOST')
+    REDIS_PORT = os.getenv('REDIS_PORT')
+    REDIS_DB = os.getenv('REDIS_DB')
     # 文件保存目录
     STORE_FOLDER = os.path.join('.', 'files')
     SERVER_URL = os.getenv('SERVER_URL')
@@ -21,4 +25,4 @@ class Config:
     CHARSET = os.getenv('CHARSET')
     FORMAT = os.getenv('FORMAT')
     SIGN_TYPE = os.getenv('SIGN_TYPE')
-    NOTIFY_URL= SERVER_URL + os.getenv('NOTIFY_URL')
+    NOTIFY_URL = SERVER_URL + os.getenv('NOTIFY_URL')
